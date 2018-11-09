@@ -8,9 +8,47 @@
     <body>
         <h1>Communication avec socket.io !</h1>
 
-        <script src="/socket.io/socket.io.js"></script>
+		<p><input type="button" value="Embêter le serveur" onclick="pokeButtonClick()" /></p>
+		
+		<p id="messages" style="border:1px dashed black; margin: 10px; padding:5px">&nbsp;</p>
+		
+		Canvas
+		<div style="padding:5px">
+			<div style="height:20px;width:200px;border:1px solid black;">
+				<div id="jauge_1" style="width:10%; height:100%; background-color:blue;">0%</div>
+			</div>
+		</div>
+		
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
         <script>
             var socket = io.connect('http://localhost:8080');
+			
+			var jaugeElement = document.getElementById("jauge_1");
+			var messagesElement = document.getElementById("messages");
+			
+			var pseudo = prompt('Quel est votre pseudo ?');
+			socket.emit('petit_nouveau', pseudo);
+			
+            socket.on('message', function(message) {
+				//alert('Le serveur a un message pour vous : ' + message.content + '\nimportance : '+message.importance);
+			});
+
+			function pokeButtonClick() {
+                socket.emit('message', 'Salut serveur, ça va ?');
+            };
+			
+			socket.on('volatile-message', function (message){
+				//alert('volatile ! '+message);
+				messagesElement.innerHTML = '<br/>'+message;
+			});
+			
+			socket.on('volatile-jauge', function (value){
+				//console.log('received value : '+value);
+				jaugeElement.style.width = value+'%';
+				jaugeElement.innerHTML = value+'%';
+				//$('jauge_1').update;
+			});
         </script>
     </body>
 </html>
