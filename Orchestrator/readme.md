@@ -36,7 +36,7 @@ Le MMF n'est rien d'autre qu'un bytearray partagé. Autrement dit une zone mémo
 Il faut donc structurer cette zone sachant que :  
 - un booléen (autrement appelé flag) peut prendre un bit mais sera plus facile à gérer sur un octet  
 - un entier prend 32 bits soit 4 octets  
-- un long prend 64 bits soit 8 octets  
+- un long prend 64 bits soit 8 octets. Attention en JS on est fortement limité en taille d'int, les long n'existent pas, les unsigned non plus...  
 - une chaine de caractère a une taille indéfinie : on devra mettre sa taille sur les premier 4 octets puis le texte lui même à la suite  
 - une image a aussi une taille indéfinie : même principe que pour le texte  
 - dans le cas de la chaine de caractères et de l'image, il faut prévoir suffisamment de place pour que toute image ou chaine tienne dans l'espace défini  
