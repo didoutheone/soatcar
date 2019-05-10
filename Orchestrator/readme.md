@@ -1,10 +1,10 @@
-Projet Soatcar v2.0  
+# Projet Soatcar v2.0
 Le principe est d'articuler des "parts" écrits en Python, C++, C#, JavaScript autour d'un Etat partagé via un Memory Mapped File (MMF).  
 
 
 # Orchestrateur
 ## Configuration
-Sous forme de ficier ini :  
+Sous forme de fichier ini :  
 - Une section Main contenant des déclarations générales : le répertoire racine, la conduite automatique ou non  
 - Une section Setup permettant de lancer des commandes avant le démarrage des parts  
 - Une section Teardown permettant de lancer des commandes après l'arrêt des parts  
@@ -19,10 +19,11 @@ L'orchestrateur applique la section [Main] : positionner les flags SteeringAuto 
 L'orchestrateur suit les sections parts dans l'ordre du fichier en lançant les exec= depuis le répertoire dir=
 
 ### Status
-Lancement avec le paramètre status
+Lancement avec le paramètre status  
 L'orchestrateur lit les section part, récupère le nom du fichier pid, lit dedans le pid et vérifie si la part tourne ou non en vérifiant si un process existe avec ce pid.  
 
 ### Stop
+Lancement avec le paramètre stop  
 L'orchestrateur met le flag StopFlag à 1 et attend le temps configuré dans la section [Main] avant de vérifier les fichiers pids pour voir si les parts se sont bien arrêtées. Si ce n'est pas le cas, lance un kill sur les parts non arrêtées, voir un kill -9.  
 Enfin il lance les commandes de la section [TearDown]
 
@@ -72,14 +73,12 @@ Il faut donc structurer cette zone sachant que :
 
 - une zone image non traitée, provenant directement de la caméra   
 - un long indiquant le numéro de l'image pour indiquer s'il y a une nouvelle image à traiter  
-
-Peut être :  
-- une zone image traitée ? Résultat d'openCV pouvant être utilisé par un algo tel que celui de Renaick plutot que l'image originale ?  
+- une zone image traitée (résultat d'openCV par exemple pouvant être utilisé par un algo tel que celui de Renaick plutot que l'image originale)  
   
 Autre ?  
 
 ## Organisation
-```
+```python
     # 3Mo to share : 1 Mo = 1 048 576 bytes for flags and int values, 1MB for raw image, 1MB for filtered image
     # Configuration flags and values
     CONST_STOP_FLAG						= 0		# byte
@@ -101,10 +100,10 @@ Autre ?
     CONST_WEBSERVER_READY				= 130	# byte
     CONST_WEBSERVER_LOOP_RATE			= 140	# int
 
-    # Throttle and steering required values between 0 and 100000
+    # Throttle and steering values required between 0 and 100000
     CONST_THROTTLE_VALUE				= 150	# int
     CONST_STEERING_VALUE				= 160	# int
-	
+
     # state variables
     CONST_ULTRASONIC_DISTANCE			= 170	# int
     CONST_CPU_TEMP						= 180	# int
@@ -114,6 +113,8 @@ Autre ?
     CONST_DISK_LOAD						= 220	# int
 
     # Images
+    CONST_IMAGE_NO						= 230	# long
+    CONST_TREATED_IMAGE_NO				= 240	# long
     CONST_CAMERA_IMAGE					= 1048576 # int for the size followed by the image itself
     CONST_CAMERA_TREATED_IMAGE			= 2097152 # int for the size followed by the image itself
 ```

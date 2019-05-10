@@ -35,6 +35,8 @@ class SoatcarState:
     CONST_DISK_LOAD						= 220	# int
 
     # Images
+    CONST_IMAGE_NO						= 230	# long
+    CONST_TREATED_IMAGE_NO				= 240	# long
     CONST_CAMERA_IMAGE					= 1048576 # int for the size followed by the image itself
     CONST_CAMERA_TREATED_IMAGE			= 2097152 # int for the size followed by the image itself
     
@@ -75,6 +77,14 @@ class SoatcarState:
         self.mm.seek(offset)
         self.mm.write(struct.pack('I', val))
     
+    def _getLong(self, offset):
+        sl = slice(offset,offset+8)
+        return struct.unpack('Q', self.mm[sl])[0]
+    
+    def _setLong(self, offset, val):
+        self.mm.seek(offset)
+        self.mm.write(struct.pack('Q', val))
+    
     # this returns bytes
     def _getArray(self, offset):
         sl = slice(offset,offset+4)
@@ -107,3 +117,9 @@ class SoatcarState:
     
     def setImage(self, data):
         self._setArray(self.CONST_CAMERA_IMAGE, data)
+    
+    def getImageNo(self):
+        return self._getLong(self.CONST_IMAGE_NO)
+    
+    def setImageNo(self, value):
+        self._setLong(self.CONST_IMAGE_NO, value)

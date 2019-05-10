@@ -19,6 +19,12 @@ scState.setThrottle(1566)
 throttle=scState.getThrottle()
 print("Throttle is {}".format(throttle))
 
+print("Set ImageNo to {}".format(9223372036854775800))
+scState.setImageNo(9223372036854775800)
+imgNo=scState.getImageNo()
+print("ImageNo is {}".format(imgNo))
+
+
 string = "Python is interesting."
 arr = bytes(string)
 print("Set Image to {}".format(arr))
