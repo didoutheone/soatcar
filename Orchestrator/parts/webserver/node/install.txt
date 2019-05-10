@@ -1,0 +1,37 @@
+# installer NodeJs : 22Mo et NPM : 19Mo
+sudo apt-get install nodejs npm git
+
+# mettre a jour npm (fermer, reouvrir la session)
+sudo npm install -g npm
+sudo npm install -g yarn
+
+# installer socket.io dans le répertoire où est app.js : 5Mo
+npm install socket.io
+
+# installer mmap-io
+git clone https://github.com/ozra/mmap-io.git
+cd mmap-io
+npm install
+
+
+# Creation du fichier memoire
+dd if=/dev/zero of=/var/tmp/soatcarmmf.tmp bs=1024 count=1
+
+# Lancement du serveur
+node app.js
+
+# Lancement du changeur d'etat
+python modmmap.py
+
+
+
+#
+# Autre mais pas utile dans cet exemple
+# 
+# Si on veut interagir directement avec le serveur node.js en python, il faut aiohttp et pip3 : 60Mo (car python 3 dev necessaire)
+sudo apt-get install python3-pip python3-aiohttp python3-websockets
+
+# install de pyhton-socketio (attention pas le meme que socketio tout court...) 
+pip3 install python-socketio
+# test
+python3.5 mock-soatcar.py

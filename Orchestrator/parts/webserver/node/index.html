@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>SOAT[car] Monitor</title>
+    </head>
+ 
+    <body>
+		Mode: <span id='spanMode'></span><br/>
+		Throttle: IN <span id='spanThrottleIn'></span> AUTO <span id='spanThrottleAuto'></span> OUT <span id='spanThrottleOut'></span><br/>
+		Steering: IN <span id='spanSteeringIn'></span> AUTO <span id='spanSteeringAuto'></span> OUT <span id='spanSteeringOut'></span><br/>
+		Distance: <span id='spanDistance'></span><br/>
+		System: CPU load <span id='spanCpuLoad'></span> temp <span id='spanCpuTemp'></span> , RAM load <span id='spanRamLoad'></span>, DISK load <span id='spanDiskLoad'></span><br/>
+		Loop Rate (Hz): <br/>
+		Main <span id='spanLoopMain'></span><br/>
+		Actuator <span id='spanReadyActuator'></span>-<span id='spanLoopActuator'></span><br/>
+		Joystick <span id='spanReadyJoystick'></span>-<span id='spanLoopJoystick'></span><br/>
+		Camera <span id='spanReadyCamera'></span>-<span id='spanLoopCamera'></span><br/>
+		Autopilot <span id='spanReadyAutopilot'></span>-<span id='spanLoopAutopilot'></span><br/>
+		Sensors <span id='spanReadySensors'></span>-<span id='spanLoopSensors'></span><br/>
+		Remote Monitoring <span id='spanReadyRemoteMonitoring'></span>-<span id='spanLoopRemoteMonitoring'></span><br/>
+		
+		
+		
+		
+		<p><input type="button" value="Embêter le serveur" onclick="pokeButtonClick()" /></p>
+		
+		<p id="messages" style="border:1px dashed black; margin: 10px; padding:5px">&nbsp;</p>
+		
+		Canvas
+		<div style="padding:5px">
+			<div style="height:20px;width:200px;border:1px solid black;">
+				<div id="jauge_1" style="width:10%; height:100%; background-color:blue;">0%</div>
+			</div>
+		</div>
+		
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io.connect();
+			
+			socket.on('update_status', function(message) {
+				var author = message.author;
+				var importance = message.importance;
+				var status = JSON.parse(message.status);
+				
+				document.getElementById('spanMode').innerHTML = status.mode;
+
+				document.getElementById('spanThrottleIn').innerHTML = status.manualInputThrottle;
+				document.getElementById('spanThrottleAuto').innerHTML = status.automaticInputThrottle;
+				document.getElementById('spanThrottleOut').innerHTML = status.outputThrottle;
+				document.getElementById('spanSteeringIn').innerHTML = status.manualInputSteering;
+				document.getElementById('spanSteeringAuto').innerHTML = status.automaticInputSteering;
+				document.getElementById('spanSteeringOut').innerHTML = status.outputSteering;
+
+				document.getElementById('spanCpuTemp').innerHTML = status.cpuTemp;
+				document.getElementById('spanCpuLoad').innerHTML = status.cpuLoad;
+				document.getElementById('spanRamLoad').innerHTML = status.ramLoad;
+				document.getElementById('spanDiskLoad').innerHTML = status.diskLoad;
+				document.getElementById('spanDistance').innerHTML = status.ultrasonicDistance;
+
+				document.getElementById('spanReadyActuator').innerHTML = status.actuatorReady;
+				document.getElementById('spanReadyJoystick').innerHTML = status.joystickReady;
+				document.getElementById('spanReadyCamera').innerHTML = status.cameraReady;
+				document.getElementById('spanReadyAutopilot').innerHTML = status.autoPilotReady;
+				document.getElementById('spanReadySensors').innerHTML = status.sensorsReady;
+				document.getElementById('spanReadyRemoteMonitoring').innerHTML = status.remoteMonitoringReady;
+
+				document.getElementById('spanLoopMain').innerHTML = status.loopRateHz;
+				document.getElementById('spanLoopActuator').innerHTML = status.actuatorLoopRateHz;
+				document.getElementById('spanLoopJoystick').innerHTML = status.joystickLoopRateHz;
+				document.getElementById('spanLoopCamera').innerHTML = status.cameraLoopRateHz;
+				document.getElementById('spanLoopAutopilot').innerHTML = status.autoPilotLoopRateHz;
+				document.getElementById('spanLoopSensors').innerHTML = status.sensorsLoopRateHz;
+				document.getElementById('spanLoopRemoteMonitoring').innerHTML = status.remoteMonitoringLoopRateHz;
+			});
+
+
+
+
+
+
+
+
+
+			var jaugeElement = document.getElementById("jauge_1");
+			var messagesElement = document.getElementById("messages");
+			
+			var pseudo = prompt('Quel est votre pseudo ?');
+			socket.emit('petit_nouveau', pseudo);
+			
+            socket.on('message', function(message) {
+                //alert('Le serveur a un message pour vous : ' + message.content + '\nimportance : '+message.importance);
+                messagesElement.innerHTML += '<br/>Std-Msg : ('+message.importance+') '+message.content;
+			});
+
+			function pokeButtonClick() {
+                socket.emit('message', 'Salut serveur, ça va ?');
+            };
+			
+			socket.on('volatile-message', function (message){
+				//alert('volatile ! '+message);
+				messagesElement.innerHTML += '<br/>Tmp-Msg : '+message;
+			});
+			
+			socket.on('volatile-jauge', function (value){
+				//console.log('received value : '+value);
+				jaugeElement.style.width = value+'%';
+				jaugeElement.innerHTML = value+'%';
+				//$('jauge_1').update;
+			});
+        </script>
+    </body>
+</html>

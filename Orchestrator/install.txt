@@ -1,0 +1,2 @@
+Avant de commecner à tester, ne pas oublier de créer le fichier MMF :
+dd if=/dev/zero of=/var/tmp/soatcarmmf.tmp bs=1024 count=3072
