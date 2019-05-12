@@ -1,0 +1,6 @@
+# pour builder :
+gcc test.cpp SoatcarState.cpp -o test
+
+# pour lancer :
+./test
+
