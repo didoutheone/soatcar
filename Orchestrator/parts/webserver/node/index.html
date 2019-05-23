@@ -2,37 +2,107 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>SOAT[car] Monitor</title>
+		<title>SOAT[car] Monitor</title>
+		<style>
+			html{
+				font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif 
+			}
+			img.picto{
+				width:64px;
+			}
+			img.minipicto{
+				width:32px;
+			}
+			table{
+				border-spacing: 10px;
+				margin: 20px auto;
+			}
+			table tr td,th{
+				text-align:center;
+				border: 1px solid #EEE;
+				padding: 5px;
+				width: 128px;
+			}
+			td.sensorscell{
+				line-height: 32px;
+			}
+		</style>
     </head>
  
     <body>
-		Mode: <span id='spanMode'></span><br/>
-		Throttle: IN <span id='spanThrottleIn'></span> AUTO <span id='spanThrottleAuto'></span> OUT <span id='spanThrottleOut'></span><br/>
-		Steering: IN <span id='spanSteeringIn'></span> AUTO <span id='spanSteeringAuto'></span> OUT <span id='spanSteeringOut'></span><br/>
-		Distance: <span id='spanDistance'></span><br/>
-		System: CPU load <span id='spanCpuLoad'></span> temp <span id='spanCpuTemp'></span> , RAM load <span id='spanRamLoad'></span>, DISK load <span id='spanDiskLoad'></span><br/>
-		Loop Rate (Hz): <br/>
-		Main <span id='spanLoopMain'></span><br/>
-		Actuator <span id='spanReadyActuator'></span>-<span id='spanLoopActuator'></span><br/>
-		Joystick <span id='spanReadyJoystick'></span>-<span id='spanLoopJoystick'></span><br/>
-		Camera <span id='spanReadyCamera'></span>-<span id='spanLoopCamera'></span><br/>
-		Autopilot <span id='spanReadyAutopilot'></span>-<span id='spanLoopAutopilot'></span><br/>
-		Sensors <span id='spanReadySensors'></span>-<span id='spanLoopSensors'></span><br/>
-		Remote Monitoring <span id='spanReadyRemoteMonitoring'></span>-<span id='spanLoopRemoteMonitoring'></span><br/>
 		
-		
-		
-		
-		<p><input type="button" value="Embêter le serveur" onclick="pokeButtonClick()" /></p>
-		
-		<p id="messages" style="border:1px dashed black; margin: 10px; padding:5px">&nbsp;</p>
-		
-		Canvas
-		<div style="padding:5px">
-			<div style="height:20px;width:200px;border:1px solid black;">
-				<div id="jauge_1" style="width:10%; height:100%; background-color:blue;">0%</div>
-			</div>
-		</div>
+		<table>
+			<tr>
+				<th><span id='spanMode'></span></th>
+				<th><img class='picto' src="png128/game-controller.png" /></th>
+				<th><img class='picto' src="png128/robot.png" /></th>
+				<th><img class='picto' src="png128/actuator2.png" /></th>
+				<th rowspan=4>
+					Contant throttle<br/>
+					<span id='spanConstantThrottleActive'></span><br/>
+					<span id='spanConstantThrottleValue'></span><hr/>
+					Recording Mode<br/>
+					<span id='spanRecordingMode'></span>
+				</th>
+				<th><img class='picto' src="png128/car-sensor.png" /></th>
+				<th><img class='picto' src="png128/camera.png" /></th>
+				<th><img class='picto' src="png128/check.png" /></th>
+			</tr>
+			<tr>
+				<td>MODE</td>
+				<td>JOYSTICK</td>
+				<td>AUTOPILOT</td>
+				<td>ACTUATOR</td>
+				<td>SENSORS</td>
+				<td>CAMERA</td>
+				<td>REMOTE MONITORING</td>
+			</tr>
+			<tr>
+				<td>Ready <span id='spanLoopMain'></span></td>
+				<td><span id='spanReadyJoystick'></span></td>
+				<td><span id='spanReadyAutopilot'></span></td>
+				<td><span id='spanReadyActuator'></span></td>
+				<td><span id='spanReadySensors'></span></td>
+				<td><span id='spanReadyCamera'></span></td>
+				<td><span id='spanReadyRemoteMonitoring'></span></td>
+			</tr>
+			<tr>
+				<td><img class='minipicto' src="png128/timer.png" /><br/>FREQUENCY</td>
+				<td><span id='spanLoopJoystick'></span> Hz</td>
+				<td><span id='spanLoopAutopilot'></span> Hz</td>
+				<td><span id='spanLoopActuator'></span> Hz</td>
+				<td><span id='spanLoopSensors'></span> Hz</td>
+				<td><span id='spanLoopCamera'></span> Hz</td>
+				<td><span id='spanLoopRemoteMonitoring'></span> Hz</td>
+			</tr>
+			<tr>
+				<td><img class='minipicto' src="png128/wheel.png" /><br/>STEERING</td>
+				<td><span id='spanSteeringIn'></span></td>
+				<td><span id='spanSteeringAuto'></span></td>
+				<td><span id='spanSteeringOut'></span></td>
+				<td rowspan=2>
+					<img class='minipicto' src="png128/car.png" /><br/>
+					<img class='minipicto' src="png128/chip.png" /><br/>
+					<img class='minipicto' src="png128/thermometer.png" /><br/>
+					<img class='minipicto' src="png128/ram.png" /><br/>
+					<img class='minipicto' src="png128/hard-disk.png" />
+				</td>
+				<td rowspan=2 class="sensorscell">
+					<span id='spanDistance'></span> cm<br/>
+					<span id='spanCpuLoad'></span><br/>
+					<span id='spanCpuTemp'></span><br/>
+					<span id='spanRamLoad'></span><br/>
+					<span id='spanDiskLoad'></span>
+				</td>
+				<td colspan=2 rowspan=2><img id='imgCamera' src="camera.jpeg" /></td>
+			</tr>
+			<tr>
+				<td><img class='minipicto' src="png128/accelerator.png" /><br/>THROTTLE</td>
+				<td><span id='spanThrottleIn'></span></td>
+				<td><span id='spanThrottleAuto'></span></td>
+				<td><span id='spanThrottleOut'></span></td>
+			</tr>
+		</table>
 		
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
@@ -52,6 +122,9 @@
 				document.getElementById('spanSteeringIn').innerHTML = status.manualInputSteering;
 				document.getElementById('spanSteeringAuto').innerHTML = status.automaticInputSteering;
 				document.getElementById('spanSteeringOut').innerHTML = status.outputSteering;
+				document.getElementById('spanConstantThrottleActive').innerHTML = status.constantThrottleActive;
+				document.getElementById('spanConstantThrottleValue').innerHTML = status.constantThrottleValue;
+				document.getElementById('spanRecordingMode').innerHTML = status.recordingMode;
 
 				document.getElementById('spanCpuTemp').innerHTML = status.cpuTemp;
 				document.getElementById('spanCpuLoad').innerHTML = status.cpuLoad;
@@ -75,40 +148,12 @@
 				document.getElementById('spanLoopRemoteMonitoring').innerHTML = status.remoteMonitoringLoopRateHz;
 			});
 
-
-
-
-
-
-
-
-
-			var jaugeElement = document.getElementById("jauge_1");
-			var messagesElement = document.getElementById("messages");
+			var imgElement = document.getElementById("imgCamera");
 			
-			var pseudo = prompt('Quel est votre pseudo ?');
-			socket.emit('petit_nouveau', pseudo);
-			
-            socket.on('message', function(message) {
-                //alert('Le serveur a un message pour vous : ' + message.content + '\nimportance : '+message.importance);
-                messagesElement.innerHTML += '<br/>Std-Msg : ('+message.importance+') '+message.content;
-			});
-
-			function pokeButtonClick() {
-                socket.emit('message', 'Salut serveur, ça va ?');
-            };
-			
-			socket.on('volatile-message', function (message){
-				//alert('volatile ! '+message);
-				messagesElement.innerHTML += '<br/>Tmp-Msg : '+message;
+			socket.on('fluxCamera', function (data){
+				imgElement.src = 'data:image/jpeg;base64,' + data['buffer'].toString();
 			});
 			
-			socket.on('volatile-jauge', function (value){
-				//console.log('received value : '+value);
-				jaugeElement.style.width = value+'%';
-				jaugeElement.innerHTML = value+'%';
-				//$('jauge_1').update;
-			});
         </script>
     </body>
 </html>
