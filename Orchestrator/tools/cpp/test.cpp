@@ -21,8 +21,8 @@ int main(int argc, char *argv[])
         printf("StopFlag is: %d\n", stopflag);
 
         printf("Set Throttle to: %d\n", 12345);
-        state.SetThrottle(12345);
-        int throttle = state.GetThrottle();
+        state.SetThrottleValue(12345);
+        int throttle = state.GetThrottleValue();
         printf("Throttle is: %d\n", throttle);
 
         printf("Set Image no to: %llu\n", 9223372036854775800);

@@ -28,7 +28,7 @@
 #define CONST_THROTTLE_VALUE				150	// int
 #define CONST_STEERING_VALUE				160	// int
 
-// state variables
+// sensor variables
 #define CONST_ULTRASONIC_DISTANCE			170	// int
 #define CONST_CPU_TEMP						180	// int
 #define CONST_CPU_LOAD						190	// int
@@ -85,17 +85,97 @@ class SoatcarState
 	// ctor: give it the memory map file full path
 	SoatcarState(const char* filename);
 	
+	// Transform source value in source range to destination value in destination range. May be inverted.
+	double Translate(double fromMin, double fromMax, double toMin, double toMax, double value, bool inverted);
+	
 	// State elements retrieval methods
 	bool GetStopFlag();
 	void SetStopFlag(bool flag);
-	
-	u32 GetThrottle();
-	void SetThrottle(u32 throttle);
-	
+
+	bool IsThrottleAuto();
+	void SetThrottleAuto(bool flag);
+
+	bool IsSteeringAuto();
+	void SetSteeringAuto(bool flag);
+
+	u32 GetThrottleMaxPct();
+	void SetThrottleMaxPct(u32 value);
+
+
+	bool IsCameraReady();
+	void SetCameraReady(bool flag);
+
+	u32 GetCameraLoopRate();
+	void SetCameraLoopRate(u32 value);
+
+	bool IsAutoPilotReady();
+	void SetAutoPilotReady(bool flag);
+
+	u32 GetAutoPilotLoopRate();
+	void SetAutoPilotLoopRate(u32 value);
+
+	bool IsJoystickReady();
+	void SetJoystickReady(bool flag);
+
+	u32 GetJoystickLoopRate();
+	void SetJoystickLoopRate(u32 value);
+
+	bool IsActuatorReady();
+	void SetActuatorReady(bool flag);
+
+	u32 GetActuatorLoopRate();
+	void SetActuatorLoopRate(u32 value);
+
+	bool IsUltrasonicReady();
+	void SetUltrasonicReady(bool flag);
+
+	u32 GetUltrasonicLoopRate();
+	void SetUltrasonicLoopRate(u32 value);
+
+	bool IsWebServerReady();
+	void SetWebServerReady(bool flag);
+
+	u32 GetWebServerLoopRate();
+	void SetWebServerLoopRate(u32 value);
+
+
+	u32 GetThrottleValue();
+	void SetThrottleValue(u32 value);
+
+	u32 GetSteeringValue();
+	void SetSteeringValue(u32 value);
+
+
+	u32 GetUltrasonicDistance();
+	void SetUltrasonicDistance(u32 value);
+
+	u32 GetCPUTemp();
+	void SetCPUTemp(u32 value);
+
+	u32 GetCPULoad();
+	void SetCPULoad(u32 value);
+
+	u32 GetLoadAverage();
+	void SetLoadAverage(u32 value);
+
+	u32 GetMemoryLoad();
+	void SetMemoryLoad(u32 value);
+
+	u32 GetDiskLoad();
+	void SetDiskLoad(u32 value);
+
+
 	u64 GetImageNo();
 	void SetImageNo(u64 imageNo);
-	
+
 	DataBuf GetImage();
 	void SetImage(DataBuf data);
+
+	u64 GetTreatedImageNo();
+	void SetTreatedImageNo(u64 imageNo);
+
+	DataBuf GetTreatedImage();
+	void SetTreatedImage(DataBuf data);
+
 };
 #endif
