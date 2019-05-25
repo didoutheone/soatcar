@@ -1,35 +1,34 @@
 #ifndef DEF_ORCHESTRATORCONFIG
 #define DEF_ORCHESTRATORCONFIG
 
-#include <stdbool.h>
-#include <vector>
-#include <sstream>
-#include <string>
+#include <stdbool.h>	// For bool
+#include <vector>		// For vector
+#include <sstream>		// For stringstream
+#include <string>		// For string
 
 using namespace std;
 
 #define MAIN_SECTION 		1
 #define SETUP_SECTION 		2
-#define CAMERA_SECTION 		3
-#define DECISION_SECTION 	4
-#define JOYSTICK_SECTION	5
-#define PWM_SECTION			6
-#define ULTRASONIC_SECTION	7
-#define WEBSERVER_SECTION	8
-#define TEARDOWN_SECTION 	9
+#define PART_SECTION 		3
+#define TEARDOWN_SECTION 	4
 
 
 typedef struct part_config_t {
+	string name;
 	string dir;
 	string exec;
 	string pidfile;
+	string logfile;
 	
 	string toString()
 	{
 		stringstream ss;
+		ss << "Part " << name << endl;
 		ss << "\tDir: " << dir << endl;
 		ss << "\tExec: " << exec << endl;
 		ss << "\tPidfile: " << pidfile << endl;
+		ss << "\tLogfile: " << logfile << endl;
 		
 		return ss.str();
 	}
@@ -48,23 +47,13 @@ class OrchestratorConfig
 		int WaitForStopInMs;
 		bool SteeringAuto;
 		bool ThrottleAuto;
+		string PidFile;
 		
 		// Setup
 		vector<string> SetupCommands;
 		
 		// PARTS
-		// Camera
-		part_config camera;
-		// Decision
-		part_config decision;
-		// Joystick
-		part_config joystick;
-		// PWM
-		part_config pwm;
-		// UltraSonic
-		part_config ultrasonic;
-		// WebServer
-		part_config webserver;
+		vector<part_config> Parts;
 		
 		// TearDown
 		vector<string> TearDownCommands;
@@ -72,12 +61,14 @@ class OrchestratorConfig
 	
 	private:
 		string configFilePath;
-		void ReadConfig();
-		int TreatSectionLine(string line);
-		bool IsAuto(string token, string line);
-		bool IsNumeric(string s);
-		string ToLower(string s);
-		vector<string> Split(string line);
-		void FillPart(part_config &p, vector<string> tokens, string line, string section);
+		void readConfig();
+		int treatSectionLine(string line);
+		string getSectionName(string line);
+		bool isAuto(string token, string line);
+		vector<string> split(string line);
+		void fillMain(vector<string> tokens, string line);
+		void fillSetup(vector<string> tokens, string line);
+		void fillTearDown(vector<string> tokens, string line);
+		void fillPart(string section, vector<string> tokens, string line);
 };
 #endif

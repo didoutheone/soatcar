@@ -44,6 +44,7 @@
 
 
 #define handle_error(msg) do { perror(msg); exit(EXIT_FAILURE); } while (0)
+
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef unsigned long long u64;

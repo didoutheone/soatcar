@@ -103,15 +103,15 @@ SoatcarState::SoatcarState(const char *fileName)
 
 	fd = open(fileName, O_RDWR);
 	if (fd == -1)
-		handle_error("open");
+		handle_error("ERROR: SOATCARSTATE - open");
 
 	if (fstat(fd, &sb) == -1)      // Pour obtenir la taille du fichier
-		handle_error("fstat");
+		handle_error("ERROR: SOATCARSTATE - fstat");
 	length = sb.st_size;
 
 	_mmap = (u8*)mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 	if (_mmap == MAP_FAILED)
-		handle_error("mmap");
+		handle_error("ERROR: SOATCARSTATE - mmap");
 
 	close(fd);
 }

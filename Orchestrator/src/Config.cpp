@@ -1,8 +1,8 @@
 #include <fstream>		// for infile
-#include <iostream>		// for cout
-#include <algorithm>	// for transform to lower case
+#include <iostream>		// for cout and cerr
 #include <regex>		// for regex_replace
 #include "Config.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 
@@ -12,7 +12,13 @@ using namespace std;
 OrchestratorConfig::OrchestratorConfig(string filename)
 {
 	configFilePath = filename;
-	ReadConfig();
+	if(!Utils::exists(configFilePath))
+	{
+		cerr << "ERROR: Config file '" << configFilePath << "' does not exist!" << endl;
+		exit(-8);
+	}
+	
+	readConfig();
 }
 
 string OrchestratorConfig::toString()
@@ -22,7 +28,8 @@ string OrchestratorConfig::toString()
 			<< "RootDir is " << RootDirectory << endl
 			<< "WaitForStop is " << to_string(WaitForStopInMs) << endl
 			<< "Steering is in " << ((SteeringAuto) ? "Auto" : "Manual") << endl
-			<< "Throttle is in " << ((ThrottleAuto) ? "Auto" : "Manual") << endl;
+			<< "Throttle is in " << ((ThrottleAuto) ? "Auto" : "Manual") << endl
+			<< "PidFile is " << PidFile << endl;
 	
 	ss << "Setup commands :" << endl;
 	for(string setupCmd : SetupCommands)
@@ -37,23 +44,11 @@ string OrchestratorConfig::toString()
 	}
 	
 	// Parts
-	ss << "Caméra part:" << endl;
-	ss << camera.toString();
+	for(part_config p : Parts)
+	{
+		ss << p.toString();
+	}
 	
-	ss << "Decision part:" << endl;
-	ss << decision.toString();
-	
-	ss << "Joystick part:" << endl;
-	ss << joystick.toString();
-	
-	ss << "PWM part:" << endl;
-	ss << pwm.toString();
-	
-	ss << "UltraSonic part:" << endl;
-	ss << ultrasonic.toString();
-	
-	ss << "WebServer part:" << endl;
-	ss << webserver.toString();
 	return ss.str();
 }
 
@@ -62,17 +57,16 @@ string OrchestratorConfig::toString()
 // -------------------------
 //         PRIVATE
 // -------------------------
-void OrchestratorConfig::ReadConfig()
+void OrchestratorConfig::readConfig()
 {
 	ifstream infile(configFilePath);
 	
 	int section = 0;
+	string sectionName;
 	
 	string line;
 	while (getline(infile, line))
-	{
-		//cout << line << endl; // debug
-		
+	{	
 		// empty line ?
 		if(line.find_first_not_of(" \t\r\n") == string::npos) continue;
 		
@@ -86,159 +80,75 @@ void OrchestratorConfig::ReadConfig()
 		// Section line ?
 		if(line[0] == '[')
 		{
-			section = TreatSectionLine(line);
+			section = treatSectionLine(line);
+			if(section == PART_SECTION) sectionName = getSectionName(line);
 			continue;
 		}
 		
 		// Split on equal (=) sign and get header and value
-		vector<string> tokens = Split(line);
+		vector<string> tokens = split(line);
 		
 		// Main section
 		if(section == MAIN_SECTION)
 		{
-			// Here we need Steering, Throttle, Root and WaitStop
-			if(ToLower(tokens[0]) == "steering")
-			{
-				SteeringAuto = IsAuto(tokens[1], line);
-			}
-			else if(ToLower(tokens[0]) == "throttle")
-			{
-				ThrottleAuto = IsAuto(tokens[1], line);
-			}
-			else if(ToLower(tokens[0]) == "root")
-			{
-				RootDirectory = tokens[1];
-			}
-			else if(ToLower(tokens[0]) == "waitstop")
-			{
-				if(!IsNumeric(tokens[1]))
-				{
-					cerr << "**** ERROR: WaitStop must be an integer!" << endl;
-					exit(2);
-				}
-				
-				WaitForStopInMs = stoi(tokens[1]);
-			}
-			else
-			{
-				cerr << "**** ERROR: line not understood in MAIN section: " << line << endl;
-				exit(4);
-			}
+			fillMain(tokens, line);
 		}
 		// Setup Section
 		else if(section == SETUP_SECTION)
 		{
-			// Retrieve exec commands
-			if(ToLower(tokens[0]) == "exec")
-			{
-				SetupCommands.push_back(tokens[1]);
-			}
-			else
-			{
-				cerr << "**** ERROR: line not understood in SETUP section: " << line << endl;
-				exit(5);
-			}
+			fillSetup(tokens, line);
 		}
 		// TearDown Section
 		else if(section == TEARDOWN_SECTION)
 		{
-			// Retrieve exec commands
-			if(ToLower(tokens[0]) == "exec")
-			{
-				TearDownCommands.push_back(tokens[1]);
-			}
-			else
-			{
-				cerr << "**** ERROR: line not understood in TEARDOWN section: " << line << endl;
-				exit(6);
-			}
+			fillTearDown(tokens, line);
 		}
-		// Camera Section
-		else if(section == CAMERA_SECTION)
+		// Part Section
+		else if(section == PART_SECTION)
 		{
-			FillPart(camera, tokens, line, "[Camera]");
-		}
-		// Decision Section
-		else if(section == DECISION_SECTION)
-		{
-			FillPart(decision, tokens, line, "[Camera]");
-		}
-		// Joystick Section
-		else if(section == JOYSTICK_SECTION)
-		{
-			FillPart(joystick, tokens, line, "[Camera]");
-		}
-		// PWM Section
-		else if(section == PWM_SECTION)
-		{
-			FillPart(pwm, tokens, line, "[Camera]");
-		}
-		// UltraSonic Section
-		else if(section == ULTRASONIC_SECTION)
-		{
-			FillPart(ultrasonic, tokens, line, "[Camera]");
-		}
-		// WebServer Section
-		else if(section == WEBSERVER_SECTION)
-		{
-			FillPart(webserver, tokens, line, "[Camera]");
+			fillPart(sectionName, tokens, line);
 		}
 		else
 		{
 			cerr << "**** ERROR: config line found outside of any section! " << line << endl;
-			exit(7);
+			exit(-7);
 		}
-		
 	}
 }
 
 
-int OrchestratorConfig::TreatSectionLine(string line)
+int OrchestratorConfig::treatSectionLine(string line)
 {
-	if(ToLower(line) == "[main]") return MAIN_SECTION;
-	if(ToLower(line) == "[setup]") return SETUP_SECTION;
-	if(ToLower(line) == "[camera]") return CAMERA_SECTION;
-	if(ToLower(line) == "[decision]") return DECISION_SECTION;
-	if(ToLower(line) == "[joystick]") return JOYSTICK_SECTION;
-	if(ToLower(line) == "[pwm]") return PWM_SECTION;
-	if(ToLower(line) == "[ultrasonic]") return ULTRASONIC_SECTION;
-	if(ToLower(line) == "[webserver]") return WEBSERVER_SECTION;
-	if(ToLower(line) == "[teardown]") return TEARDOWN_SECTION;
+	if(Utils::toLower(line) == "[main]") return MAIN_SECTION;
+	if(Utils::toLower(line) == "[setup]") return SETUP_SECTION;
+	if(Utils::toLower(line) == "[teardown]") return TEARDOWN_SECTION;
 
-	return 0;
+	return PART_SECTION;
 }
 
-bool OrchestratorConfig::IsAuto(string token, string line)
+string OrchestratorConfig::getSectionName(string line)
 {
-	if(ToLower(token) == "auto")
+	return line.substr(1, line.find_first_of("]") - 1);
+}
+
+bool OrchestratorConfig::isAuto(string token, string line)
+{
+	if(Utils::toLower(token) == "auto")
 	{
 		return true;
 	}
-	else if(ToLower(token) == "manual")
+	else if(Utils::toLower(token) == "manual")
 	{
 		return false;
 	}
 	else
 	{
 		cerr << "**** ERROR: boolean config (" << token << ") should be auto or manual!" << endl << "Line is: " << line << endl;
-		exit(1);
+		exit(-1);
 	}
 }
 
-bool OrchestratorConfig::IsNumeric(string s)
-{
-    return !s.empty() && find_if(s.begin(), s.end(), [](char c) { return !isdigit(c); }) == s.end();
-}
-
-string OrchestratorConfig::ToLower(string s)
-{
-	// convert to lower case
-	string res = string(s);
-    transform(s.begin(), s.end(), res.begin(), ::tolower);
-	return res;
-}
-
-vector<string> OrchestratorConfig::Split(string line)
+vector<string> OrchestratorConfig::split(string line)
 {
 	vector<string> result(2);
 	string header = line.substr(0, line.find_first_of("="));
@@ -251,24 +161,111 @@ vector<string> OrchestratorConfig::Split(string line)
 	return result;
 }
 
-void OrchestratorConfig::FillPart(part_config &p, vector<string> tokens, string line, string section)
+void OrchestratorConfig::fillMain(vector<string> tokens, string line)
 {
+	// Here we need Steering, Throttle, Root and WaitStop
+	if(Utils::toLower(tokens[0]) == "steering")
+	{
+		SteeringAuto = isAuto(tokens[1], line);
+	}
+	else if(Utils::toLower(tokens[0]) == "throttle")
+	{
+		ThrottleAuto = isAuto(tokens[1], line);
+	}
+	else if(Utils::toLower(tokens[0]) == "root")
+	{
+		RootDirectory = tokens[1];
+	}
+	else if(Utils::toLower(tokens[0]) == "waitstop")
+	{
+		if(!Utils::isNumeric(tokens[1]))
+		{
+			cerr << "**** ERROR: WaitStop must be an integer!" << endl;
+			exit(-2);
+		}
+		
+		WaitForStopInMs = stoi(tokens[1]);
+	}
+	else if(Utils::toLower(tokens[0]) == "pidfile")
+	{
+		PidFile = tokens[1];
+	}
+	else
+	{
+		cerr << "**** ERROR: line not understood in MAIN section: " << line << endl;
+		exit(-4);
+	}
+}
+
+void OrchestratorConfig::fillSetup(vector<string> tokens, string line)
+{
+	// Retrieve exec commands
+	if(Utils::toLower(tokens[0]) == "exec")
+	{
+		SetupCommands.push_back(tokens[1]);
+	}
+	else
+	{
+		cerr << "**** ERROR: line not understood in SETUP section: " << line << endl;
+		exit(-5);
+	}
+}
+
+void OrchestratorConfig::fillTearDown(vector<string> tokens, string line)
+{
+	// Retrieve exec commands
+	if(Utils::toLower(tokens[0]) == "exec")
+	{
+		TearDownCommands.push_back(tokens[1]);
+	}
+	else
+	{
+		cerr << "**** ERROR: line not understood in TEARDOWN section: " << line << endl;
+		exit(-6);
+	}
+}
+
+void OrchestratorConfig::fillPart(string section, vector<string> tokens, string line)
+{
+	// Get part by name
+	int foundPos = -1;
+	for(unsigned int i=0; i < Parts.size(); ++i)
+	{
+		if(Parts[i].name == section)
+		{
+			 foundPos = (int)i;
+			 break;
+		}
+	}
+	
+	if(foundPos == -1)
+	{
+		part_config p;
+		p.name = section;
+		Parts.push_back(p);
+		foundPos = Parts.size() - 1;
+	}
+	
 	// We need dir, exec and pidfile
-	if(ToLower(tokens[0]) == "dir")
+	if(Utils::toLower(tokens[0]) == "dir")
 	{
-		p.dir = tokens[1];
+		Parts[foundPos].dir = tokens[1];
 	}
-	else if(ToLower(tokens[0]) == "exec")
+	else if(Utils::toLower(tokens[0]) == "exec")
 	{
-		p.exec = tokens[1];
+		Parts[foundPos].exec = tokens[1];
 	}
-	else if(ToLower(tokens[0]) == "pidfile")
+	else if(Utils::toLower(tokens[0]) == "pidfile")
 	{
-		p.pidfile = tokens[1];
+		Parts[foundPos].pidfile = tokens[1];
+	}
+	else if(Utils::toLower(tokens[0]) == "logfile")
+	{
+		Parts[foundPos].logfile = tokens[1];
 	}
 	else
 	{
 		cerr << "**** ERROR: header " << tokens[0] << " not understood in " << section << " section: " << line << endl;
-		exit(3);
+		exit(-3);
 	}
 }
