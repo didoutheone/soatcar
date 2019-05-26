@@ -10,41 +10,48 @@ class StateManager {
 		this.CONST_IMAGE_NO = 230;
 		this.CONST_CAMERA_IMAGE = 1048576;
 
-		this.CONST_STEERING_INPUT
-		this.CONST_THROTTLE_INPUT
-		this.CONST_CONSTANT_THROTTLE_VALUE
-		this.CONST_CONSTANT_THROTTLE_ACTIVE
-		this.CONST_STEERING_AUTO
-		this.CONST_THROTTLE_AUTO
-		this.CONST_STEERING_OUTPUT
-		this.CONST_THROTTLE_OUTPUT
-		this.CONST_CPU_TEMP
-		this.CONST_CPU_LOAD
-		this.CONST_RAM_LOAD
-		this.CONST_DISK_LOAD
-		this.CONST_ULTRASONIC_DISTANCE
-		this.CONST_SENSORS_READY
-		this.CONST_ACTUATOR_READY
-		this.CONST_JOYSTICK_READY
-		this.CONST_CAMERA_READY
-		this.CONST_AUTOPILOT_READY
-		this.CONST_REMOTE_MONITOR_READY
-		this.CONST_SENSORS_LOOP_RATE_HZ
-		this.CONST_ACTUATOR_LOOP_RATE_HZ
-		this.CONST_JOYSTICK_LOOP_RATE_HZ
-		this.CONST_CAMERA_LOOP_RATE_HZ
-		this.CONST_AUTOPILOT_LOOP_RATE_HZ
-		this.CONST_REMOTE_MONITOR_LOOP_RATE_HZ
-		this.CONST_HOSTNAME
-		this.CONST_DRIVING_MODE
-		this.CONST_IS_RECORDING
-		this.CONST_RECORDING_PREFIX
-		this.CONST_RECORDING_FOLDER
-		this.CONST_RECORDING_IMAGE_INDEX
-		this.CONST_MAX_THROTTLE_LIMIT
-		this.
-		this.
-		;
+		// Contrôle de la voiture
+		this.CONST_IS_DRIVING_AUTO = False;						// Booléen indiquant si la voiture fonctionne en mode autonome
+		this.CONST_STEERING_INPUT = 0;							// Valeur de steering en entrée manuelle
+		this.CONST_THROTTLE_INPUT = 0;							// Valeur de throttle en entrée manuelle
+		this.CONST_CONSTANT_THROTTLE_VALUE = 0;					// Valeur du throttle en mode constant
+		this.CONST_CONSTANT_THROTTLE_ACTIVE = False;			// Booléen pour indiquer si le throttle constant est actif
+		this.CONST_STEERING_AUTO = 0;							// Valeur du steering par le pilote automatique
+		this.CONST_THROTTLE_AUTO = 0;							// Valeur du throttle par le pilote automatique
+		this.CONST_STEERING_OUTPUT = 0;							// Valeur de steering à envoyer à la voiture
+		this.CONST_THROTTLE_OUTPUT = 0;							// Valeur de throttle à envoyer à la voiture
+		this.CONST_MAX_THROTTLE_LIMIT = 0;						// Valeur maximale de throttle admise
+
+		
+		// Capteurs systèmes
+		this.CONST_CPU_TEMP = 0;								// Température du CPU
+		this.CONST_CPU_LOAD = 0;								// Pourcentage de charge du CPU
+		this.CONST_RAM_LOAD = 0;								// Pourcentage de charge de la RAM
+		this.CONST_DISK_LOAD = 0;								// Pourcentage d'utilisation de l'espace disque
+		
+		// Capteurs physiques
+		this.CONST_ULTRASONIC_DISTANCE = 0;						// Distance mesurée par le capteur à ultrason
+		
+		// Management de sparts
+		this.CONST_SENSORS_READY = False;						// Booléen indiquant si le part Sensor est prêt à s'exécuter
+		this.CONST_ACTUATOR_READY = False;						// Booléen indiquant si le part Actuateur est prêt à s'exécuter
+		this.CONST_JOYSTICK_READY = False;						// Booléen indiquant si le part Joystick est prêt à s'exécuter
+		this.CONST_CAMERA_READY = False;						// Booléen indiquant si le part Camera est prêt à s'exécuter
+		this.CONST_AUTOPILOT_READY = False;						// Booléen indiquant si le part Pilote-Auto est prêt à s'exécuter
+		this.CONST_REMOTE_MONITOR_READY = False;				// Booléen indiquant si le part Monitoring est prêt à s'exécuter
+		this.CONST_SENSORS_LOOP_RATE_HZ = 0;					// Fréquence d'exécution du part Sensors
+		this.CONST_ACTUATOR_LOOP_RATE_HZ = 0;					// Fréquence d'exécution du part Actuateur
+		this.CONST_JOYSTICK_LOOP_RATE_HZ = 0;					// Fréquence d'exécution du part Joystick
+		this.CONST_CAMERA_LOOP_RATE_HZ = 0;						// Fréquence d'exécution du part Camera
+		this.CONST_AUTOPILOT_LOOP_RATE_HZ = 0;					// Fréquence d'exécution du part Pilote-Auto
+		this.CONST_REMOTE_MONITOR_LOOP_RATE_HZ = 0;				// Fréquence d'exécution du part Monitoring
+		
+		// Configuration systèe de la voiture - enregistrement d'images
+		this.CONST_HOSTNAME = 0;								// Indication de la voiture / ordi qui héberge le code
+		this.CONST_IS_RECORDING = False;						// Booléen indiquant si la voiture est en train d'enregistrer des immages
+		this.CONST_RECORDING_PREFIX = '';						// Chaine de caractères qui sera le préfixe des images enregistrées
+		this.CONST_RECORDING_FOLDER = '';						// Chaine de caractère indiquant le répertoire local dans lequel enregistrer les images
+		this.CONST_RECORDING_IMAGE_INDEX = 0;					// Entier indiquant le numéro de l'image enregistrée, au sein de l'enregistrement en cours
 	}
 
 	constructor() {
@@ -183,8 +190,8 @@ class StateManager {
 
 	// Parameters
 	getHostname() { 			return this._getData(this.CONST_HOSTNAME); 				}
-	getDrivingMode() { 			return this._getInt(this.CONST_DRIVING_MODE); 			}
-	setDrivingMode(val) { 		this._setInt(this.CONST_DRIVING_MODE, val); 			}
+	getIsDrivingAuto() { 		return this._getInt(this.CONST_IS_DRIVING_AUTO);		}
+	setIsDrivingAuto(val) { 	this._setInt(this.CONST_IS_DRIVING_AUTO, val); 			}
 	getIsRecording() { 			return this._getFlag(this.CONST_IS_RECORDING); 			}
 	setIsRecording(val) { 		this._setFlag(this.CONST_IS_RECORDING, val); 			}
 	getRecordingPrefix() { 		return this._getData(this.CONST_RECORDING_PREFIX); 		}
