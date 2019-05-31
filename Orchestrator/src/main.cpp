@@ -5,20 +5,25 @@ using namespace std;
 								
 void usage(string cmd)
 {
-	cout << endl << "USAGE : la commande " << cmd << " peut prendre comme argument: status, start ou stop" << endl;
+	cout << "\033[36m USAGE \033[39m : la commande " << cmd << " peut prendre comme argument: configtest, status, start ou stop" << endl;
 }
 
 int main(int argc, char** argv)
 {
-	Orchestrator orc;
-	cout << orc.config.toString() << endl;
-	
 	if(argc != 2)
 	{
 		usage(argv[0]);
 		exit(0);
 	}
-	if(Utils::toLower(argv[1]) == "status")
+	
+	Orchestrator orc;
+	
+	if(Utils::toLower(argv[1]) == "configtest")
+	{
+		cout << orc.config.toString() << endl;
+		exit(0);
+	}
+	else if(Utils::toLower(argv[1]) == "status")
 	{
 		orc.status();
 		exit(0);

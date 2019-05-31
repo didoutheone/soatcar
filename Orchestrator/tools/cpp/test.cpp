@@ -21,13 +21,13 @@ int main(int argc, char *argv[])
         printf("StopFlag is: %d\n", stopflag);
 
         printf("Set Throttle to: %d\n", 12345);
-        state.SetThrottleValue(12345);
-        int throttle = state.GetThrottleValue();
+        state.SetThrottleOutput(12345);
+        int throttle = state.GetThrottleOutput();
         printf("Throttle is: %d\n", throttle);
 
         printf("Set Image no to: %llu\n", 9223372036854775800);
-        state.SetImageNo(9223372036854775800);
-        u64 imageNo = state.GetImageNo();
+        state.SetRawImageNo(9223372036854775800);
+        u64 imageNo = state.GetRawImageNo();
         printf("Image no is: %llu\n", imageNo);
 
         int fd = open("testfile", O_RDONLY);
@@ -51,10 +51,10 @@ int main(int argc, char *argv[])
                 printf("%02x", data.buffer[i]);
         }
         printf("\n");
-        state.SetImage(data);
+        state.SetRawImage(data);
         free(data.buffer);
 
-        DataBuf imageData = state.GetImage();
+        DataBuf imageData = state.GetRawImage();
         printf("Image size is: %d\n", imageData.length);
         for(int i = 0; i < 100; i++)
         {

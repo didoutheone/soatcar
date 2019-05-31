@@ -1,8 +1,10 @@
-#ifndef DEF_ORCHESTRATORUTILS
-#define DEF_ORCHESTRATORUTILS
+#ifndef DEF_SOATCARUTILS
+#define DEF_SOATCARUTILS
 
 #include <stdbool.h>
 #include <string>
+
+#define DEFAULT_MMF_FILE "/var/tmp/soatcarmmf.tmp"
 
 using namespace std;
 

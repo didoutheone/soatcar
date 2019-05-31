@@ -15,7 +15,7 @@ OrchestratorConfig::OrchestratorConfig(string filename)
 	if(!Utils::exists(configFilePath))
 	{
 		cerr << "ERROR: Config file '" << configFilePath << "' does not exist!" << endl;
-		exit(-8);
+		exit(-10);
 	}
 	
 	readConfig();
@@ -24,11 +24,14 @@ OrchestratorConfig::OrchestratorConfig(string filename)
 string OrchestratorConfig::toString()
 {
 	stringstream ss;
-	ss << "- CONFIGURATION -" << endl
+	ss << "\033[36m *** SOATCAR CONFIGURATION *** \033[39m" << endl
 			<< "RootDir is " << RootDirectory << endl
 			<< "WaitForStop is " << to_string(WaitForStopInMs) << endl
 			<< "Steering is in " << ((SteeringAuto) ? "Auto" : "Manual") << endl
 			<< "Throttle is in " << ((ThrottleAuto) ? "Auto" : "Manual") << endl
+			<< "Max Throttle Limit is " << to_string(MaxThrottleLimit) << endl
+			<< "Constant Throttle is " << ((ConstantThrottleActive) ? "Active" : "Inactive") << endl
+			<< "Constant Throttle is set to " << to_string(ConstantThrottleValue) << endl
 			<< "PidFile is " << PidFile << endl;
 	
 	ss << "Setup commands :" << endl;
@@ -111,7 +114,7 @@ void OrchestratorConfig::readConfig()
 		else
 		{
 			cerr << "**** ERROR: config line found outside of any section! " << line << endl;
-			exit(-7);
+			exit(-1);
 		}
 	}
 }
@@ -144,7 +147,7 @@ bool OrchestratorConfig::isAuto(string token, string line)
 	else
 	{
 		cerr << "**** ERROR: boolean config (" << token << ") should be auto or manual!" << endl << "Line is: " << line << endl;
-		exit(-1);
+		exit(-30);
 	}
 }
 
@@ -163,7 +166,7 @@ vector<string> OrchestratorConfig::split(string line)
 
 void OrchestratorConfig::fillMain(vector<string> tokens, string line)
 {
-	// Here we need Steering, Throttle, Root and WaitStop
+	// Here we need Steering, Throttle, MaxThrottleLimit, ConstantThrottleActive, ConstantThrottleValue, Root and WaitStop
 	if(Utils::toLower(tokens[0]) == "steering")
 	{
 		SteeringAuto = isAuto(tokens[1], line);
@@ -171,6 +174,28 @@ void OrchestratorConfig::fillMain(vector<string> tokens, string line)
 	else if(Utils::toLower(tokens[0]) == "throttle")
 	{
 		ThrottleAuto = isAuto(tokens[1], line);
+	}
+	else if(Utils::toLower(tokens[0]) == "maxthrottlelimit")
+	{
+		if(!Utils::isNumeric(tokens[1]))
+		{
+			cerr << "**** ERROR: MaxThrottleLimit must be an integer!" << endl;
+			exit(-20);
+		}
+		MaxThrottleLimit = stoi(tokens[1]);
+	}
+	else if(Utils::toLower(tokens[0]) == "ConstantThrottleActive")
+	{
+		ConstantThrottleActive = (Utils::toLower(tokens[1]) == "true");
+	}
+	else if(Utils::toLower(tokens[0]) == "ConstantThrottleValue")
+	{
+		if(!Utils::isNumeric(tokens[1]))
+		{
+			cerr << "**** ERROR: ConstantThrottleValue must be an integer!" << endl;
+			exit(-21);
+		}
+		ConstantThrottleValue = stoi(tokens[1]);
 	}
 	else if(Utils::toLower(tokens[0]) == "root")
 	{
@@ -181,7 +206,7 @@ void OrchestratorConfig::fillMain(vector<string> tokens, string line)
 		if(!Utils::isNumeric(tokens[1]))
 		{
 			cerr << "**** ERROR: WaitStop must be an integer!" << endl;
-			exit(-2);
+			exit(-22);
 		}
 		
 		WaitForStopInMs = stoi(tokens[1]);
@@ -193,7 +218,7 @@ void OrchestratorConfig::fillMain(vector<string> tokens, string line)
 	else
 	{
 		cerr << "**** ERROR: line not understood in MAIN section: " << line << endl;
-		exit(-4);
+		exit(-23);
 	}
 }
 
@@ -207,7 +232,7 @@ void OrchestratorConfig::fillSetup(vector<string> tokens, string line)
 	else
 	{
 		cerr << "**** ERROR: line not understood in SETUP section: " << line << endl;
-		exit(-5);
+		exit(-40);
 	}
 }
 
@@ -221,7 +246,7 @@ void OrchestratorConfig::fillTearDown(vector<string> tokens, string line)
 	else
 	{
 		cerr << "**** ERROR: line not understood in TEARDOWN section: " << line << endl;
-		exit(-6);
+		exit(-41);
 	}
 }
 
@@ -266,6 +291,6 @@ void OrchestratorConfig::fillPart(string section, vector<string> tokens, string 
 	else
 	{
 		cerr << "**** ERROR: header " << tokens[0] << " not understood in " << section << " section: " << line << endl;
-		exit(-3);
+		exit(-42);
 	}
 }

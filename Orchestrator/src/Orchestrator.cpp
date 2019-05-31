@@ -17,11 +17,17 @@ bool Orchestrator::isOrchestratorAlive()
 
 void Orchestrator::status()
 {
-	cout << "*** SOATCAR STATUS ***" << endl;
+	cout << "\033[36m *** SOATCAR STATUS *** \033[39m" << endl;
+	
+	// Check MMF file
+	string mmf("MMF File");
+	mmf.insert(mmf.end(), 15 - mmf.size(), ' '); // Just for text alignment
+	cout << "- Status of " << mmf << " is: \t" << ((Utils::exists(DEFAULT_MMF_FILE)) ? "\033[32m Existing" : "\033[31m NOT FOUND") << "\033[39m" << endl;
+	
 	// Check status of each part
 	// First the orchestrator
 	string s("Orchestrator");
-	s.insert(s.end(), 15 - s.size(), ' ');
+	s.insert(s.end(), 15 - s.size(), ' '); // Just for text alignment
 	cout << "- Status of " << s << " is: \t" << (isOrchestratorAlive() ? "\033[32m Alive" : "\033[31m Dead Cold") << "\033[39m" << endl;
 	
 	// Then each part
@@ -29,7 +35,7 @@ void Orchestrator::status()
 	{
 		PartManager mgr(p);
 		string s = p.name;
-		s.insert(s.end(), 15 - s.size(), ' ');
+		s.insert(s.end(), 15 - s.size(), ' '); // Just for text alignment
 		cout << "- Status of " << s << " is: \t" << (mgr.IsAlive() ? "\033[32m Alive" : "\033[31m Dead Cold") << "\033[39m" << endl;
 	}
 }
@@ -38,9 +44,17 @@ bool Orchestrator::stop()
 {
 	bool hasError = false;
 	
-	cout << "*** SOATCAR STOP ***" << endl;
+	cout << "\033[36m *** SOATCAR STOP *** \033[39m" << endl;
+	
+	// Check if MMF file exists
+	if(!Utils::exists(DEFAULT_MMF_FILE))
+	{
+		cout << "MMF File '" << DEFAULT_MMF_FILE << "' not found so parts cant be running." << endl;
+		return true;
+	}
+	
 	cout << "Setting stop flag to true and wait for " << config.WaitForStopInMs << "ms" << endl;
-	state = new SoatcarState("/var/tmp/soatcarmmf.tmp");
+	state = new SoatcarState(DEFAULT_MMF_FILE);
 	state->SetStopFlag(true);
 		
 	// Wait for config.WaitForStopInMs for each parts to stop
@@ -103,7 +117,7 @@ bool Orchestrator::stop()
 
 bool Orchestrator::start()
 {
-	cout << "*** SOATCAR START ***" << endl;
+	cout << "\033[36m *** SOATCAR START *** \033[39m" << endl;
 	
 	// Check if parts are running: exit if it is the case
 	bool isSomethingAlive = false;
@@ -137,9 +151,16 @@ bool Orchestrator::start()
 	}
 	
 	// Init State
-	state = new SoatcarState("/var/tmp/soatcarmmf.tmp");
+	state = new SoatcarState(DEFAULT_MMF_FILE);
 	state->SetThrottleAuto(config.ThrottleAuto);
 	state->SetSteeringAuto(config.SteeringAuto);
+	state->SetMaxThrottleLimit(config.MaxThrottleLimit);
+	state->SetConstantThrottleActive(config.ConstantThrottleActive);
+	state->SetConstantThrottleValue(config.ConstantThrottleValue);
+	// Host name
+	char hostname[64];
+	gethostname(hostname, 64);
+	state->SetHostName(hostname);
 	state->SetStopFlag(false);
 	
 	// Launch parts

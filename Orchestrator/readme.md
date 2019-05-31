@@ -5,8 +5,8 @@ Le principe est d'articuler des "parts" écrits en Python, C++, C#, JavaScript a
 # Orchestrateur
 ## Configuration
 Sous forme de fichier ini :  
-- Une section Main contenant des déclarations générales : le répertoire racine, la conduite automatique ou non  
-- Une section Setup permettant de lancer des commandes avant le démarrage des parts  
+- Une section Main contenant des déclarations générales : le répertoire racine, la conduite automatique ou non, le hostname, ...  
+- Une section Setup permettant de lancer des commandes avant le démarrage des parts
 - Une section Teardown permettant de lancer des commandes après l'arrêt des parts  
 - Une section par part pour définir la commande à lancer, dans quel répertoire et son fichier pid  
 
@@ -44,78 +44,91 @@ Il faut donc structurer cette zone sachant que :
 - si possible éviter les négatifs : ce sera plus simple   
   
 ## Les champs requis
-- un flag STOP demandant à toutes les parts de quitter  
-- un flag ThrottleAuto : est ce que la vitesse est gérée par un process de décision (ThrottleAuto=true) ou par manuellement via le joystick (ThrottleAuto=false)  
-- un flag SteeringAuto  : est ce que la direction est gérée par un process de décision (SteeringAuto=true) ou par manuellement via le joystick (SteeringAuto=false)  
-
-- un flag camera ready  
-- un entier camera loop rate en Hz  
-- un flag autoPilot ready  
-- un entier autoPilot loop rate en Hz  
-- un flag joystick ready  
-- un entier joystick loop rate en Hz  
-- un flag pwm/actuator ready  
-- un entier pwm/actuator loop rate en Hz  
-- un flag ultrasonic sensor ready  
-- un entier ultrasonic loop rate en Hz  
-- un flag webserver ready  
-- un entier webserver loop rate en Hz  
-
-- un entier décrivant la vitesse demandée sur une echelle de 0 à 100000 (0 : à fond en arrière, 50 000 : au repos, 100 000 : à fond en avant)  
-- un entier limitant la vitesse maximale de 0 à 100%  
-- un entier décrivant la direction demandée sur une echelle de 0 à 100000 par exemple (0 : à fond à gauche, 50 000 : tout droit, 100 000 : à fond à droite)  
-- un entier distance ultrason avant (en millimetre. On a un seul capteur frontal ?)
-- un entier pour la temperature CPU x 1000 (en millidegré donc)  
-- un entier charge CPU (pourcentage CPU utilisé)  
-- un entier load average x1000 (indicateur de charge du serveur - voir top)  
-- un entier charge mémoire (pourcentage de RAM utilisé)  
-- un entier charge disque (pourcentage de disque utilisé)  
-
-- une zone image non traitée, provenant directement de la caméra   
-- un long indiquant le numéro de l'image pour indiquer s'il y a une nouvelle image à traiter  
-- une zone image traitée (résultat d'openCV par exemple pouvant être utilisé par un algo tel que celui de Renaick plutot que l'image originale)  
+Il s'en ajoute chaque jour, liés aux diverses parts et aux usages.    
+Le plus simple est de séparer le MMF en zones de 10Ko, une zone "générale" et ensuite une zone par part (c'est à dire une zone de 10Ko où une part spécifique peut écrire et les autres lire).    
+On se met alors d'accord sur les premiers champs et on en ajoute selon la nécessité avant de les officialiser.   
   
-Autre ?  
+Découpage par 10Ko :   
+- 0 à 10Ko : les champs généraux (Stop flag, conduite autonome, vitesse autonome, max de vitesse...) voir de la configuration si besoin est.   
+- 10Ko à 20Ko : Le joystick   
+- 20Ko à 30Ko : Le PWM   
+- 30Ko à 40Ko : Les Sensors système du Pi (CPU, RAM, Disque...)   
+- 40Ko à 50Ko : Les Sensors physiques (Ultrasonic...)   
+- 50Ko à 60Ko : La part de decision/d'auto-pilote par réseau de neurone, openCV (attention l'image traitée est à la position 2Mo) ou autre   
+- 60Ko à 70Ko : La caméra (attention l'image elle même est à la position 1Mo)   
+- 70Ko à 80Ko : Le serveur web de remote monitoring 
+- 80Ko à 90Ko : La gestion des LEDs  
+-  ...
+- 1000Ko à 2000Ko : l'image brute prise par la caméra   
+- 2000Ko à 3000Ko : l'image traitée   
+
 
 ## Organisation
+
 ```python
-    # 3Mo to share : 1 Mo = 1 048 576 bytes for flags and int values, 1MB for raw image, 1MB for filtered image
-    # Configuration flags and values
-    CONST_STOP_FLAG						= 0		# byte
-    CONST_THROTTLE_AUTO					= 10	# byte
-    CONST_THROTTLE_MAX_PCT				= 15	# int
-    CONST_STEERING_AUTO					= 20	# byte
+    # 3Mo to share : 1 Mo = 1 048 576 bytes for flags and int values splitted by part, 1MB for raw image, 1MB for filtered image
     
-    # Parts ready and loop rates
-    CONST_CAMERA_READY					= 30	# byte
-    CONST_CAMERA_LOOP_RATE				= 40	# int
-    CONST_AUTO_PILOT_READY				= 50	# byte
-    CONST_AUTO_PILOT_LOOP_RATE			= 60	# int
-    CONST_JOYSTICK_READY				= 70	# byte
-    CONST_JOYSTICK_LOOP_RATE			= 80	# int
-    CONST_ACTUATOR_READY				= 90	# byte
-    CONST_ACTUATOR_LOOP_RATE			= 100	# int
-    CONST_ULTRASONIC_READY				= 110	# byte
-    CONST_ULTRASONIC_LOOP_RATE			= 120	# int
-    CONST_WEBSERVER_READY				= 130	# byte
-    CONST_WEBSERVER_LOOP_RATE			= 140	# int
-
-    # Throttle and steering values required between 0 and 100000
-    CONST_THROTTLE_VALUE				= 150	# int
-    CONST_STEERING_VALUE				= 160	# int
-
-    # state variables
-    CONST_ULTRASONIC_DISTANCE			= 170	# int
-    CONST_CPU_TEMP						= 180	# int
-    CONST_CPU_LOAD						= 190	# int
-    CONST_LOAD_AVERAGE					= 200	# int
-    CONST_MEMORY_LOAD					= 210	# int
-    CONST_DISK_LOAD						= 220	# int
-
+    # Common fields
+    CONST_STOP_FLAG						= 0		# byte - Si cette valeur passe à true (1), toutes les parts doivent s'arrêter
+    CONST_IS_STEERING_AUTO				= 10	# byte - La voiture gère t'elle la direction en mode autonome ?
+    CONST_IS_THROTTLE_AUTO				= 20	# byte - La voiture gère t'elle la vitesse en mode autonome ?
+    CONST_MAX_THROTTLE_LIMIT			= 30	# int - Valeur maximale de throttle admise dans la plage [0 - 10000]
+    CONST_IS_CONSTANT_THROTTLE_ACTIVE	= 40	# byte - La vitesse est-elle fixée / constante ?
+    CONST_CONSTANT_THROTTLE_VALUE		= 50	# int - Fixer une valeur de vitesse constante dans la plage [0 - 10000]
+    CONST_HOSTNAME						= 60	# string - hostname servant d'identifiant de la soatcar / l'ordi qui héberge le code (64 characters max) donc faire commencer le suivant à minimum 130)
+    
+    # Joystick
+    CONST_IS_JOYSTICK_READY				= 10000	# byte - La part Joystick est-elle prête ?
+    CONST_JOYSTICK_LOOP_RATE			= 10010	# int - Fréquence en Hz de la boucle de traitement des inputs du joystick
+    CONST_JOYSTICK_STEERING_VALUE       = 10020	# int - Valeur de steering en entrée manuelle dans la plage [0 - 10000]
+    CONST_JOYSTICK_THROTTLE_VALUE		= 10030	# int - Valeur de throttle en entrée manuelle dans la plage [0 - 10000]
+    
+    # PWM
+    CONST_IS_ACTUATOR_READY				= 20000	# byte - La part Actuator/PWM est-elle prête ?
+    CONST_ACTUATOR_LOOP_RATE			= 20010	# int - Fréquence en Hz de la boucle de traitement des Actuator/PWM
+    CONST_STEERING_OUTPUT				= 20020	# int - La valeur de steering réellement utilisée pour le PWM de direction dans la plage [0 - 10000]
+    CONST_THROTTLE_OUTPUT				= 20030	# int - La valeur de throttle réellement utilisée pour le PWM de vitesse dans la plage [0 - 10000]
+    
+    # System sensors
+    CONST_IS_SYSTEM_SENSOR_READY		= 30000	# byte - La part System Sensor (CPU load, RAM, ...) est-elle prête ?
+    CONST_SYSTEM_SENSOR_LOOP_RATE		= 30010	# int - Fréquence en Hz de la boucle de traitement des Sensors système
+    CONST_CPU_TEMP						= 30020	# int - Température du CPU
+    CONST_CPU_LOAD						= 30030	# int - Pourcentage de charge du CPU
+    CONST_RAM_LOAD						= 30040	# int - Pourcentage de charge de la RAM
+    CONST_DISK_LOAD						= 30050	# int - Pourcentage d'utilisation de l'espace disque
+    CONST_LOAD_AVERAGE					= 30060	# int - Load average x 100 : cf top
+    
+    # Physical sensors
+    CONST_IS_PHYSICAL_SENSOR_READY		= 40000	# byte - La part physical Sensor (Ultrasons, ...) est-elle prête ?
+    CONST_PHYSICAL_SENSOR_LOOP_RATE		= 40010	# int - Fréquence en Hz de la boucle de traitement des Sensors physiques
+    CONST_ULTRASONIC_DISTANCE			= 40020	# int - Distance en mm détectée par le détecteur à ultrasons
+    
+    # Auto pilot
+    CONST_IS_AUTOPILOT_READY			= 50000	# byte - La part d'auto pilote est-elle prête ?
+    CONST_AUTOPILOT_LOOP_RATE			= 50010	# int - Fréquence en Hz de la boucle d'auto pilotage
+    CONST_AUTO_STEERING_VALUE			= 50020	# int - Valeur de steering en mode automatique dans la plage [0 - 10000]
+    CONST_AUTO_THROTTLE_VALUE			= 50030	# int - Valeur de throttle en mode automatique dans la plage [0 - 10000]
+    
+    # Camera
+    CONST_IS_CAMERA_READY				= 60000	# byte - La part caméra est-elle prête ?
+    CONST_CAMERA_LOOP_RATE				= 60010	# int - Fréquence en Hz de la boucle de récupération d'images par la caméra
+    CONST_IS_RECORDING					= 60020	# byte - Booléen indiquant si la voiture est en train d'enregistrer des immages
+    CONST_RECORDING_PREFIX				= 60030	# string - Chaine de caractères qui sera le préfixe des images enregistrées
+    CONST_RECORDING_FOLDER				= 60040	# string - Chaine de caractère indiquant le répertoire local dans lequel enregistrer les images
+    CONST_RECORDING_IMAGE_INDEX			= 60050	# int - Entier indiquant le numéro de l'image enregistrée, au sein de l'enregistrement en cours
+    
+    # Remote monitoring web server
+    CONST_IS_REMOTE_MONITORING_READY	= 70000	# byte - La part remote monitoring est-elle prête ?
+    CONST_REMOTE_MONITORING_LOOP_RATE	= 70010	# int - Fréquence en Hz de la boucle de récupération d'images par la caméra
+    
+    # Led management
+    CONST_IS_LED_MANAGER_READY			= 80000	# byte - La part de gestion des LEDs est-elle prête ?
+    CONST_LED_MANAGER_LOOP_RATE			= 80010	# int - Fréquence en Hz de la boucle de gestion des LEDs
+    
     # Images
-    CONST_IMAGE_NO						= 230	# long
-    CONST_TREATED_IMAGE_NO				= 240	# long
-    CONST_CAMERA_IMAGE					= 1048576 # int for the size followed by the image itself
-    CONST_CAMERA_TREATED_IMAGE			= 2097152 # int for the size followed by the image itself
+    CONST_CAMERA_IMAGE_NO				= 1000000	# int - Image index
+    CONST_CAMERA_IMAGE					= 1000010	# int - Raw image
+    CONST_TREATED_IMAGE_NO				= 2000000	# int - Treated image index
+    CONST_TREATED_IMAGE					= 2000010	# int - Treated image
 ```
 

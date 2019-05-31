@@ -1,7 +1,8 @@
-CFLAGS  = -Wall -g -O2
+TOOLSDIR= ../tools
+CFLAGS  = -Wall -g -O2 -I../tools/cpp
 LDFLAGS = -lstdc++
 
-SRC_C =		main.cpp Config.cpp Orchestrator.cpp PartManager.cpp Utils.cpp ../tools/cpp/SoatcarState.cpp
+SRC_C =		main.cpp Config.cpp Orchestrator.cpp PartManager.cpp $(TOOLSDIR)/Utils.cpp $(TOOLSDIR)/SoatcarState.cpp
 
 LIBS =
 

@@ -47,6 +47,9 @@ class OrchestratorConfig
 		int WaitForStopInMs;
 		bool SteeringAuto;
 		bool ThrottleAuto;
+		int MaxThrottleLimit;
+		bool ConstantThrottleActive;
+		int ConstantThrottleValue;
 		string PidFile;
 		
 		// Setup
