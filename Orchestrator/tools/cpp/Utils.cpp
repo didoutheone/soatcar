@@ -78,3 +78,26 @@ vector<string> Utils::split(string line)
 	
 	return result;
 }
+
+clock_type::time_point Utils::getBeginChrono()
+{
+	return clock_type::now();
+}
+
+int Utils::getElapsedMillisSince(clock_type::time_point begin)
+{
+	return chrono::duration_cast<chrono::milliseconds>(clock_type::now() - begin).count();
+}
+
+int Utils::getFrequency(clock_type::time_point begin)
+{
+	int elapsedmilli = chrono::duration_cast<chrono::milliseconds>(clock_type::now() - begin).count();
+	if(elapsedmilli > 0)
+	{
+		return (int)((double)1000 / (double)elapsedmilli);
+	}
+	else
+	{
+		return 0;
+	}
+}

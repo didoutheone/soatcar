@@ -39,9 +39,14 @@ int main(int argc, char** argv)
 	state.setActuatorReady(true);
 	while(!state.getStopFlag())
 	{
+		clock_type::time_point begin = Utils::getBeginChrono();
+		
 		Direction.work();
 		Throttle.work();
 		this_thread::sleep_for(chrono::milliseconds(5));
+		
+		int freq = Utils::getFrequency(begin);
+		state.setActuatorLoopRate(freq);
 	}
 	
 	state.setActuatorReady(false);

@@ -8,6 +8,7 @@
 #include <linux/joystick.h> // For joystick structures
 
 #include "joystick.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 
@@ -33,6 +34,7 @@ void JoystickPart::run()
 {
 	while(!state.getStopFlag())
 	{
+		clock_type::time_point begin = Utils::getBeginChrono();
 		js_event_t event = pollJoystick(infos);
 		
 		if(event.type != 0x0 && event.type != 0x40)
@@ -82,6 +84,9 @@ void JoystickPart::run()
 		}
 		
 		this_thread::sleep_for(chrono::milliseconds(5));
+		
+		int freq = Utils::getFrequency(begin);
+		state.setJoystickLoopRate(freq);
 	}
 	
 	closeJoystickDevice(infos);
