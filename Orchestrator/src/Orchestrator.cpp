@@ -12,7 +12,7 @@ bool Orchestrator::isOrchestratorAlive()
 	po.name = "Orchestrator";
 	po.pidfile = config.PidFile;
 	PartManager mgro(po);
-	return mgro.IsAlive();
+	return mgro.isAlive();
 }
 
 void Orchestrator::status()
@@ -36,7 +36,7 @@ void Orchestrator::status()
 		PartManager mgr(p);
 		string s = p.name;
 		s.insert(s.end(), 15 - s.size(), ' '); // Just for text alignment
-		cout << "- Status of " << s << " is: \t" << (mgr.IsAlive() ? "\033[32m Alive" : "\033[31m Dead Cold") << "\033[39m" << endl;
+		cout << "- Status of " << s << " is: \t" << (mgr.isAlive() ? "\033[32m Alive" : "\033[31m Dead Cold") << "\033[39m" << endl;
 	}
 }
 
@@ -55,14 +55,14 @@ bool Orchestrator::stop()
 	
 	cout << "Setting stop flag to true and wait for " << config.WaitForStopInMs << "ms" << endl;
 	state = new SoatcarState(DEFAULT_MMF_FILE);
-	state->SetStopFlag(true);
+	state->setStopFlag(true);
 		
 	// Wait for config.WaitForStopInMs for each parts to stop
 	this_thread::sleep_for(chrono::milliseconds(config.WaitForStopInMs));
 	
 	// Check that parts are stopped and force them to stop if needed
 	// First Orchestrator because it may respawn the parts, but dont kill if it is the current process...
-	string strPid = Utils::ReadFileFirstLine(config.PidFile);
+	string strPid = Utils::readFileFirstLine(config.PidFile);
 	int opid = -1;
 	if(strPid.length() != 0) opid = stoi(strPid);
 	if(opid != -1 && opid != getpid())
@@ -74,7 +74,7 @@ bool Orchestrator::stop()
 			po.name = "Orchestrator";
 			po.pidfile = config.PidFile;
 			PartManager mgro(po);
-			bool res = mgro.Kill();
+			bool res = mgro.killPart();
 			if(!res)
 			{
 				cerr << "ERROR: can't kill orchestrator! Do it manually :(" << endl;
@@ -88,10 +88,10 @@ bool Orchestrator::stop()
 	for(part_config p : config.Parts)
 	{
 		PartManager mgr(p);
-		bool isAlive = mgr.IsAlive();
+		bool isAlive = mgr.isAlive();
 		if(isAlive)
 		{
-			bool res = mgr.Kill();
+			bool res = mgr.killPart();
 			if(!res)
 			{
 				cerr << "ERROR: can't kill part " << p.name <<"! Do it manually :(" << endl;
@@ -99,7 +99,7 @@ bool Orchestrator::stop()
 			}
 		}
 		
-		cout << "Part " << p.name << " was " << (isAlive ? "ALIVE" : "STOPPED") << " and is now " << (mgr.IsAlive() ? "ALIVE" : "STOPPED") << endl;
+		cout << "Part " << p.name << " was " << (isAlive ? "ALIVE" : "STOPPED") << " and is now " << (mgr.isAlive() ? "ALIVE" : "STOPPED") << endl;
 	}
 	
 	// Launch Teardown commands if no errro found
@@ -107,7 +107,7 @@ bool Orchestrator::stop()
 	{
 		for(string tdCmd : config.TearDownCommands)
 		{
-			int ret = Utils::ExecuteShellCommand(tdCmd);
+			int ret = Utils::executeShellCommand(tdCmd);
 			cout << "Teardown command (" << tdCmd << ") launched with status " << ret << endl;
 		}
 	}
@@ -130,7 +130,7 @@ bool Orchestrator::start()
 	for(part_config p : config.Parts)
 	{
 		PartManager mgr(p);
-		if(mgr.IsAlive())
+		if(mgr.isAlive())
 		{
 			cout << "Part " << p.name << " is alive. Stop it before starting." << endl;
 			isSomethingAlive = true;
@@ -141,33 +141,33 @@ bool Orchestrator::start()
 	
 	// Set my pid in pidfile
 	int mypid = getpid();
-	Utils::WriteFile(config.PidFile, to_string(mypid));
+	Utils::writeFile(config.PidFile, to_string(mypid));
 	
 	// Launch setup commands
 	for(string stCmd : config.SetupCommands)
 	{
-		int ret = Utils::ExecuteShellCommand(stCmd);
+		int ret = Utils::executeShellCommand(stCmd);
 		cout << "Setup command (" << stCmd << ") launched with status " << ret << endl;
 	}
 	
 	// Init State
 	state = new SoatcarState(DEFAULT_MMF_FILE);
-	state->SetThrottleAuto(config.ThrottleAuto);
-	state->SetSteeringAuto(config.SteeringAuto);
-	state->SetMaxThrottleLimit(config.MaxThrottleLimit);
-	state->SetConstantThrottleActive(config.ConstantThrottleActive);
-	state->SetConstantThrottleValue(config.ConstantThrottleValue);
+	state->setThrottleAuto(config.ThrottleAuto);
+	state->setSteeringAuto(config.SteeringAuto);
+	state->setMaxThrottleLimit(config.MaxThrottleLimit);
+	state->setConstantThrottleActive(config.ConstantThrottleActive);
+	state->setConstantThrottleValue(config.ConstantThrottleValue);
 	// Host name
 	char hostname[64];
 	gethostname(hostname, 64);
-	state->SetHostName(hostname);
-	state->SetStopFlag(false);
+	state->setHostName(hostname);
+	state->setStopFlag(false);
 	
 	// Launch parts
 	for(part_config p : config.Parts)
 	{
 		PartManager mgr(p);
-		int ret = mgr.Start();
+		int ret = mgr.start();
 		if(ret != 0)
 		{
 			cerr << "ERROR: Part " << p.name << " could not be started (error " << ret << ")" << endl;
@@ -176,7 +176,7 @@ bool Orchestrator::start()
 		
 		// Sleep a bit to let the part launch and eventually fail
 		this_thread::sleep_for(chrono::milliseconds(500));
-		if(!mgr.IsAlive())
+		if(!mgr.isAlive())
 		{
 			cerr << "ERROR: Part " << p.name << " could not be started (not alive)!" << endl;
 			return false;
@@ -187,13 +187,13 @@ bool Orchestrator::start()
 	
 	// Loop till the end
 	bool partFailed = false;
-	while(state->GetStopFlag() == 0)
+	while(state->getStopFlag() == 0)
 	{
 		// Work
 		for(part_config p : config.Parts)
 		{
 			PartManager mgr(p);
-			if(!mgr.IsAlive())
+			if(!mgr.isAlive())
 			{
 				cout << "Part " << p.name << " is dead!" << endl;
 				partFailed = true;
@@ -209,7 +209,7 @@ bool Orchestrator::start()
 		// Launch Teardown commands
 		for(string tdCmd : config.TearDownCommands)
 		{
-			int ret = Utils::ExecuteShellCommand(tdCmd);
+			int ret = Utils::executeShellCommand(tdCmd);
 			cout << "Teardown command (" << tdCmd << ") launched with status " << ret << endl;
 		}
 	}

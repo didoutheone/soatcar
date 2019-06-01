@@ -2,7 +2,7 @@ TOOLSDIR = ../../../../tools/cpp
 CFLAGS   = -Wall -g -O2 -I$(TOOLSDIR)
 LDFLAGS  = -lstdc++
 
-SRC_C    = config.cpp joystick.cpp $(TOOLSDIR)/Utils.cpp $(TOOLSDIR)/SoatcarState.cpp
+SRC_C    = main.cpp config.cpp joystick.cpp $(TOOLSDIR)/Utils.cpp $(TOOLSDIR)/SoatcarState.cpp
 
 LIBS     =
 

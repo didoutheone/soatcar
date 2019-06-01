@@ -9,9 +9,9 @@ class PartManager
 {
 	public:
 		PartManager(part_config ppart);
-		int Start();
-		bool IsAlive();
-		bool Kill();
+		int start();
+		bool isAlive();
+		bool killPart();
 		
 	private:
 		part_config part;

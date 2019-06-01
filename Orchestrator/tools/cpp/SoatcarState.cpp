@@ -117,7 +117,7 @@ SoatcarState::SoatcarState(const char *fileName)
 }
 
 
-double SoatcarState::Translate(double fromMin, double fromMax, double toMin, double toMax, double value, bool inverted)
+double SoatcarState::translate(double fromMin, double fromMax, double toMin, double toMax, double value, bool inverted)
 {
 	double val = toMin + ((value - fromMin) * (toMax - toMin) / (fromMax - fromMin));
 			
@@ -129,169 +129,169 @@ double SoatcarState::Translate(double fromMin, double fromMax, double toMin, dou
 //
 // Common fields
 //
-bool SoatcarState::GetStopFlag() { return _getFlag(CONST_STOP_FLAG); }
-void SoatcarState::SetStopFlag(bool flag) { _setFlag(CONST_STOP_FLAG, flag); }
+bool SoatcarState::getStopFlag() { return _getFlag(CONST_STOP_FLAG); }
+void SoatcarState::setStopFlag(bool flag) { _setFlag(CONST_STOP_FLAG, flag); }
 
-bool SoatcarState::IsThrottleAuto() { return _getFlag(CONST_IS_THROTTLE_AUTO); }
-void SoatcarState::SetThrottleAuto(bool flag) { _setFlag(CONST_IS_THROTTLE_AUTO, flag); }
+bool SoatcarState::isThrottleAuto() { return _getFlag(CONST_IS_THROTTLE_AUTO); }
+void SoatcarState::setThrottleAuto(bool flag) { _setFlag(CONST_IS_THROTTLE_AUTO, flag); }
 
-bool SoatcarState::IsSteeringAuto() { return _getFlag(CONST_IS_STEERING_AUTO); }
-void SoatcarState::SetSteeringAuto(bool flag) { _setFlag(CONST_IS_STEERING_AUTO, flag); }
+bool SoatcarState::isSteeringAuto() { return _getFlag(CONST_IS_STEERING_AUTO); }
+void SoatcarState::setSteeringAuto(bool flag) { _setFlag(CONST_IS_STEERING_AUTO, flag); }
 
-u32 SoatcarState::GetMaxThrottleLimit() { return _getInt(CONST_MAX_THROTTLE_LIMIT); }
-void SoatcarState::SetMaxThrottleLimit(u32 value) { _setInt(CONST_MAX_THROTTLE_LIMIT, value); }
+u32 SoatcarState::getMaxThrottleLimit() { return _getInt(CONST_MAX_THROTTLE_LIMIT); }
+void SoatcarState::setMaxThrottleLimit(u32 value) { _setInt(CONST_MAX_THROTTLE_LIMIT, value); }
 
-bool SoatcarState::IsConstantThrottleActive() { return _getFlag(CONST_IS_CONSTANT_THROTTLE_ACTIVE); }
-void SoatcarState::SetConstantThrottleActive(bool flag) { _setFlag(CONST_IS_CONSTANT_THROTTLE_ACTIVE, flag); }
+bool SoatcarState::isConstantThrottleActive() { return _getFlag(CONST_IS_CONSTANT_THROTTLE_ACTIVE); }
+void SoatcarState::setConstantThrottleActive(bool flag) { _setFlag(CONST_IS_CONSTANT_THROTTLE_ACTIVE, flag); }
 
-u32 SoatcarState::GetConstantThrottleValue() { return _getInt(CONST_CONSTANT_THROTTLE_VALUE); }
-void SoatcarState::SetConstantThrottleValue(u32 value) { _setInt(CONST_CONSTANT_THROTTLE_VALUE, value); }
+u32 SoatcarState::getConstantThrottleValue() { return _getInt(CONST_CONSTANT_THROTTLE_VALUE); }
+void SoatcarState::setConstantThrottleValue(u32 value) { _setInt(CONST_CONSTANT_THROTTLE_VALUE, value); }
 
-char* SoatcarState::GetHostName() { return _getString(CONST_HOSTNAME); }
-void SoatcarState::SetHostName(char* value)  { _setString(CONST_HOSTNAME, value); }
+char* SoatcarState::getHostName() { return _getString(CONST_HOSTNAME); }
+void SoatcarState::setHostName(char* value)  { _setString(CONST_HOSTNAME, value); }
 
 
 //
 // Joystick fields
 //
-bool SoatcarState::IsJoystickReady() { return _getFlag(CONST_IS_JOYSTICK_READY); }
-void SoatcarState::SetJoystickReady(bool flag) { _setFlag(CONST_IS_JOYSTICK_READY, flag); }
+bool SoatcarState::isJoystickReady() { return _getFlag(CONST_IS_JOYSTICK_READY); }
+void SoatcarState::setJoystickReady(bool flag) { _setFlag(CONST_IS_JOYSTICK_READY, flag); }
 
-u32 SoatcarState::GetJoystickLoopRate() { return _getInt(CONST_JOYSTICK_LOOP_RATE); }
-void SoatcarState::SetJoystickLoopRate(u32 value) { _setInt(CONST_JOYSTICK_LOOP_RATE, value); }
+u32 SoatcarState::getJoystickLoopRate() { return _getInt(CONST_JOYSTICK_LOOP_RATE); }
+void SoatcarState::setJoystickLoopRate(u32 value) { _setInt(CONST_JOYSTICK_LOOP_RATE, value); }
 
-u32 SoatcarState::GetJoystickSteeringValue() { return _getInt(CONST_JOYSTICK_STEERING_VALUE); }
-void SoatcarState::SetJoystickSteeringValue(u32 value) { _setInt(CONST_JOYSTICK_STEERING_VALUE, value); }
+u32 SoatcarState::getJoystickSteeringValue() { return _getInt(CONST_JOYSTICK_STEERING_VALUE); }
+void SoatcarState::setJoystickSteeringValue(u32 value) { _setInt(CONST_JOYSTICK_STEERING_VALUE, value); }
 
-u32 SoatcarState::GetJoystickThrottleValue() { return _getInt(CONST_JOYSTICK_THROTTLE_VALUE); }
-void SoatcarState::SetJoystickThrottleValue(u32 value) { _setInt(CONST_JOYSTICK_THROTTLE_VALUE, value); }
+u32 SoatcarState::getJoystickThrottleValue() { return _getInt(CONST_JOYSTICK_THROTTLE_VALUE); }
+void SoatcarState::setJoystickThrottleValue(u32 value) { _setInt(CONST_JOYSTICK_THROTTLE_VALUE, value); }
 
 
 //
 // PWM part
 //
-bool SoatcarState::IsActuatorReady() { return _getFlag(CONST_IS_ACTUATOR_READY); }
-void SoatcarState::SetActuatorReady(bool flag) { _setFlag(CONST_IS_ACTUATOR_READY, flag); }
+bool SoatcarState::isActuatorReady() { return _getFlag(CONST_IS_ACTUATOR_READY); }
+void SoatcarState::setActuatorReady(bool flag) { _setFlag(CONST_IS_ACTUATOR_READY, flag); }
 
-u32 SoatcarState::GetActuatorLoopRate() { return _getInt(CONST_ACTUATOR_LOOP_RATE); }
-void SoatcarState::SetActuatorLoopRate(u32 value) { _setInt(CONST_ACTUATOR_LOOP_RATE, value); }
+u32 SoatcarState::getActuatorLoopRate() { return _getInt(CONST_ACTUATOR_LOOP_RATE); }
+void SoatcarState::setActuatorLoopRate(u32 value) { _setInt(CONST_ACTUATOR_LOOP_RATE, value); }
 
-u32 SoatcarState::GetSteeringOutput() { return _getInt(CONST_STEERING_OUTPUT); }
-void SoatcarState::SetSteeringOutput(u32 value) { _setInt(CONST_STEERING_OUTPUT, value); }
+u32 SoatcarState::getSteeringOutput() { return _getInt(CONST_STEERING_OUTPUT); }
+void SoatcarState::setSteeringOutput(u32 value) { _setInt(CONST_STEERING_OUTPUT, value); }
 
-u32 SoatcarState::GetThrottleOutput() { return _getInt(CONST_THROTTLE_OUTPUT); }
-void SoatcarState::SetThrottleOutput(u32 value) { _setInt(CONST_THROTTLE_OUTPUT, value); }
+u32 SoatcarState::getThrottleOutput() { return _getInt(CONST_THROTTLE_OUTPUT); }
+void SoatcarState::setThrottleOutput(u32 value) { _setInt(CONST_THROTTLE_OUTPUT, value); }
 
 
 //
 // System sensors
 //
-bool SoatcarState::IsSystemSensorReady() { return _getFlag(CONST_IS_SYSTEM_SENSOR_READY); }
-void SoatcarState::SetSystemSensorReady(bool flag) { _setFlag(CONST_IS_SYSTEM_SENSOR_READY, flag); }
+bool SoatcarState::isSystemSensorReady() { return _getFlag(CONST_IS_SYSTEM_SENSOR_READY); }
+void SoatcarState::setSystemSensorReady(bool flag) { _setFlag(CONST_IS_SYSTEM_SENSOR_READY, flag); }
 
-u32 SoatcarState::GetSystemSensorLoopRate() { return _getInt(CONST_SYSTEM_SENSOR_LOOP_RATE); }
-void SoatcarState::SetSystemSensorLoopRate(u32 value) { _setInt(CONST_SYSTEM_SENSOR_LOOP_RATE, value); }
+u32 SoatcarState::getSystemSensorLoopRate() { return _getInt(CONST_SYSTEM_SENSOR_LOOP_RATE); }
+void SoatcarState::setSystemSensorLoopRate(u32 value) { _setInt(CONST_SYSTEM_SENSOR_LOOP_RATE, value); }
 
-u32 SoatcarState::GetCPUTemp() { return _getInt(CONST_CPU_TEMP); }
-void SoatcarState::SetCPUTemp(u32 value) { _setInt(CONST_CPU_TEMP, value); }
+u32 SoatcarState::getCPUTemp() { return _getInt(CONST_CPU_TEMP); }
+void SoatcarState::setCPUTemp(u32 value) { _setInt(CONST_CPU_TEMP, value); }
 
-u32 SoatcarState::GetCPULoad() { return _getInt(CONST_CPU_LOAD); }
-void SoatcarState::SetCPULoad(u32 value) { _setInt(CONST_CPU_LOAD, value); }
+u32 SoatcarState::getCPULoad() { return _getInt(CONST_CPU_LOAD); }
+void SoatcarState::setCPULoad(u32 value) { _setInt(CONST_CPU_LOAD, value); }
 
-u32 SoatcarState::GetMemoryLoad() { return _getInt(CONST_RAM_LOAD); }
-void SoatcarState::SetMemoryLoad(u32 value) { _setInt(CONST_RAM_LOAD, value); }
+u32 SoatcarState::getMemoryLoad() { return _getInt(CONST_RAM_LOAD); }
+void SoatcarState::setMemoryLoad(u32 value) { _setInt(CONST_RAM_LOAD, value); }
 
-u32 SoatcarState::GetDiskLoad() { return _getInt(CONST_DISK_LOAD); }
-void SoatcarState::SetDiskLoad(u32 value) { _setInt(CONST_DISK_LOAD, value); }
+u32 SoatcarState::getDiskLoad() { return _getInt(CONST_DISK_LOAD); }
+void SoatcarState::setDiskLoad(u32 value) { _setInt(CONST_DISK_LOAD, value); }
 
-u32 SoatcarState::GetLoadAverage() { return _getInt(CONST_LOAD_AVERAGE); }
-void SoatcarState::SetLoadAverage(u32 value) { _setInt(CONST_LOAD_AVERAGE, value); }
+u32 SoatcarState::getLoadAverage() { return _getInt(CONST_LOAD_AVERAGE); }
+void SoatcarState::setLoadAverage(u32 value) { _setInt(CONST_LOAD_AVERAGE, value); }
 
 
 //
 // Physical sensors
 //
-bool SoatcarState::IsPhysicalSensorReady() { return _getFlag(CONST_IS_PHYSICAL_SENSOR_READY); }
-void SoatcarState::SetPhysicalSensorReady(bool flag) { _setFlag(CONST_IS_PHYSICAL_SENSOR_READY, flag); }
+bool SoatcarState::isPhysicalSensorReady() { return _getFlag(CONST_IS_PHYSICAL_SENSOR_READY); }
+void SoatcarState::setPhysicalSensorReady(bool flag) { _setFlag(CONST_IS_PHYSICAL_SENSOR_READY, flag); }
 
-u32 SoatcarState::GetPhysicalSensorLoopRate() { return _getInt(CONST_PHYSICAL_SENSOR_LOOP_RATE); }
-void SoatcarState::SetPhysicalSensorLoopRate(u32 value) { _setInt(CONST_PHYSICAL_SENSOR_LOOP_RATE, value); }
+u32 SoatcarState::getPhysicalSensorLoopRate() { return _getInt(CONST_PHYSICAL_SENSOR_LOOP_RATE); }
+void SoatcarState::setPhysicalSensorLoopRate(u32 value) { _setInt(CONST_PHYSICAL_SENSOR_LOOP_RATE, value); }
 
-u32 SoatcarState::GetUltrasonicDistance() { return _getInt(CONST_ULTRASONIC_DISTANCE); }
-void SoatcarState::SetUltrasonicDistance(u32 value) { _setInt(CONST_ULTRASONIC_DISTANCE, value); }
+u32 SoatcarState::getUltrasonicDistance() { return _getInt(CONST_ULTRASONIC_DISTANCE); }
+void SoatcarState::setUltrasonicDistance(u32 value) { _setInt(CONST_ULTRASONIC_DISTANCE, value); }
 
 
 //
 // Auto pilot
 //
-bool SoatcarState::IsAutoPilotReady() { return _getFlag(CONST_IS_AUTOPILOT_READY); }
-void SoatcarState::SetAutoPilotReady(bool flag) { _setFlag(CONST_IS_AUTOPILOT_READY, flag); }
+bool SoatcarState::isAutoPilotReady() { return _getFlag(CONST_IS_AUTOPILOT_READY); }
+void SoatcarState::setAutoPilotReady(bool flag) { _setFlag(CONST_IS_AUTOPILOT_READY, flag); }
 
-u32 SoatcarState::GetAutoPilotLoopRate() { return _getInt(CONST_AUTOPILOT_LOOP_RATE); }
-void SoatcarState::SetAutoPilotLoopRate(u32 value) { _setInt(CONST_AUTOPILOT_LOOP_RATE, value); }
+u32 SoatcarState::getAutoPilotLoopRate() { return _getInt(CONST_AUTOPILOT_LOOP_RATE); }
+void SoatcarState::setAutoPilotLoopRate(u32 value) { _setInt(CONST_AUTOPILOT_LOOP_RATE, value); }
 
-u32 SoatcarState::GetAutoPilotSteeringValue() { return _getInt(CONST_AUTO_STEERING_VALUE); }
-void SoatcarState::SetAutoPilotSteeringValue(u32 value) { _setInt(CONST_AUTO_STEERING_VALUE, value); }
+u32 SoatcarState::getAutoPilotSteeringValue() { return _getInt(CONST_AUTO_STEERING_VALUE); }
+void SoatcarState::setAutoPilotSteeringValue(u32 value) { _setInt(CONST_AUTO_STEERING_VALUE, value); }
 
-u32 SoatcarState::GetAutoPilotThrottleValue() { return _getInt(CONST_AUTO_THROTTLE_VALUE); }
-void SoatcarState::SetAutoPilotThrottleValue(u32 value) { _setInt(CONST_AUTO_THROTTLE_VALUE, value); }
+u32 SoatcarState::getAutoPilotThrottleValue() { return _getInt(CONST_AUTO_THROTTLE_VALUE); }
+void SoatcarState::setAutoPilotThrottleValue(u32 value) { _setInt(CONST_AUTO_THROTTLE_VALUE, value); }
 
 
 //
 // Camera
 //
-bool SoatcarState::IsCameraReady() { return _getFlag(CONST_IS_CAMERA_READY); }
-void SoatcarState::SetCameraReady(bool flag) { _setFlag(CONST_IS_CAMERA_READY, flag); }
+bool SoatcarState::isCameraReady() { return _getFlag(CONST_IS_CAMERA_READY); }
+void SoatcarState::setCameraReady(bool flag) { _setFlag(CONST_IS_CAMERA_READY, flag); }
 
-u32 SoatcarState::GetCameraLoopRate() { return _getInt(CONST_CAMERA_LOOP_RATE); }
-void SoatcarState::SetCameraLoopRate(u32 value) { _setInt(CONST_CAMERA_LOOP_RATE, value); }
+u32 SoatcarState::getCameraLoopRate() { return _getInt(CONST_CAMERA_LOOP_RATE); }
+void SoatcarState::setCameraLoopRate(u32 value) { _setInt(CONST_CAMERA_LOOP_RATE, value); }
 
-bool SoatcarState::IsRecording() { return _getFlag(CONST_IS_RECORDING); }
-void SoatcarState::SetRecording(bool flag) { _setFlag(CONST_IS_RECORDING, flag); }
+bool SoatcarState::isRecording() { return _getFlag(CONST_IS_RECORDING); }
+void SoatcarState::setRecording(bool flag) { _setFlag(CONST_IS_RECORDING, flag); }
 
-char* SoatcarState::GetRecordingPrefix() { return _getString(CONST_RECORDING_PREFIX); }
-void SoatcarState::SetRecordingPrefix(char* value)  { _setString(CONST_RECORDING_PREFIX, value); }
+char* SoatcarState::getRecordingPrefix() { return _getString(CONST_RECORDING_PREFIX); }
+void SoatcarState::setRecordingPrefix(char* value)  { _setString(CONST_RECORDING_PREFIX, value); }
 
-char* SoatcarState::GetRecordingFolder() { return _getString(CONST_RECORDING_FOLDER); }
-void SoatcarState::SetRecordingFolder(char* value)  { _setString(CONST_RECORDING_FOLDER, value); }
+char* SoatcarState::getRecordingFolder() { return _getString(CONST_RECORDING_FOLDER); }
+void SoatcarState::setRecordingFolder(char* value)  { _setString(CONST_RECORDING_FOLDER, value); }
 
-u32 SoatcarState::GetRecordingImageIndex() { return _getInt(CONST_RECORDING_IMAGE_INDEX); }
-void SoatcarState::SetRecordingImageIndex(u32 value) { _setInt(CONST_RECORDING_IMAGE_INDEX, value); }
+u32 SoatcarState::getRecordingImageIndex() { return _getInt(CONST_RECORDING_IMAGE_INDEX); }
+void SoatcarState::setRecordingImageIndex(u32 value) { _setInt(CONST_RECORDING_IMAGE_INDEX, value); }
 
 
 //
 // Remote monitoring web server
 //
-bool SoatcarState::IsRemoteMonitoringReady() { return _getFlag(CONST_IS_REMOTE_MONITORING_READY); }
-void SoatcarState::SetRemoteMonitoringReady(bool flag) { _setFlag(CONST_IS_REMOTE_MONITORING_READY, flag); }
+bool SoatcarState::isRemoteMonitoringReady() { return _getFlag(CONST_IS_REMOTE_MONITORING_READY); }
+void SoatcarState::setRemoteMonitoringReady(bool flag) { _setFlag(CONST_IS_REMOTE_MONITORING_READY, flag); }
 
-u32 SoatcarState::GetRemoteMonitoringLoopRate() { return _getInt(CONST_REMOTE_MONITORING_LOOP_RATE); }
-void SoatcarState::SetRemoteMonitoringLoopRate(u32 value) { _setInt(CONST_REMOTE_MONITORING_LOOP_RATE, value); }
+u32 SoatcarState::getRemoteMonitoringLoopRate() { return _getInt(CONST_REMOTE_MONITORING_LOOP_RATE); }
+void SoatcarState::setRemoteMonitoringLoopRate(u32 value) { _setInt(CONST_REMOTE_MONITORING_LOOP_RATE, value); }
 
 
 //
 // LED Management
 //
-bool SoatcarState::IsLedManagementReady() { return _getFlag(CONST_IS_LED_MANAGER_READY); }
-void SoatcarState::SetLedManagementReady(bool flag) { _setFlag(CONST_IS_LED_MANAGER_READY, flag); }
+bool SoatcarState::isLedManagementReady() { return _getFlag(CONST_IS_LED_MANAGER_READY); }
+void SoatcarState::setLedManagementReady(bool flag) { _setFlag(CONST_IS_LED_MANAGER_READY, flag); }
 
-u32 SoatcarState::GetLedManagementLoopRate() { return _getInt(CONST_LED_MANAGER_LOOP_RATE); }
-void SoatcarState::SetLedManagementLoopRate(u32 value) { _setInt(CONST_LED_MANAGER_LOOP_RATE, value); }
+u32 SoatcarState::getLedManagementLoopRate() { return _getInt(CONST_LED_MANAGER_LOOP_RATE); }
+void SoatcarState::setLedManagementLoopRate(u32 value) { _setInt(CONST_LED_MANAGER_LOOP_RATE, value); }
 
 
 //
 // Images
 //
-u64 SoatcarState::GetRawImageNo() { return _getLong(CONST_CAMERA_IMAGE_NO); }
-void SoatcarState::SetRawImageNo(u64 imageNo) { _setLong(CONST_CAMERA_IMAGE_NO, imageNo); }
+u64 SoatcarState::getRawImageNo() { return _getLong(CONST_CAMERA_IMAGE_NO); }
+void SoatcarState::setRawImageNo(u64 imageNo) { _setLong(CONST_CAMERA_IMAGE_NO, imageNo); }
 
-DataBuf SoatcarState::GetRawImage() { return _getData(CONST_CAMERA_IMAGE); }
-void SoatcarState::SetRawImage(DataBuf data) { _setData(CONST_CAMERA_IMAGE, data); }
+DataBuf SoatcarState::getRawImage() { return _getData(CONST_CAMERA_IMAGE); }
+void SoatcarState::setRawImage(DataBuf data) { _setData(CONST_CAMERA_IMAGE, data); }
 
-u64 SoatcarState::GetTreatedImageNo() { return _getLong(CONST_TREATED_IMAGE_NO); }
-void SoatcarState::SetTreatedImageNo(u64 imageNo) { _setLong(CONST_TREATED_IMAGE_NO, imageNo); }
+u64 SoatcarState::getTreatedImageNo() { return _getLong(CONST_TREATED_IMAGE_NO); }
+void SoatcarState::setTreatedImageNo(u64 imageNo) { _setLong(CONST_TREATED_IMAGE_NO, imageNo); }
 
-DataBuf SoatcarState::GetTreatedImage() { return _getData(CONST_TREATED_IMAGE); }
-void SoatcarState::SetTreatedImage(DataBuf data) { _setData(CONST_TREATED_IMAGE, data); }
+DataBuf SoatcarState::getTreatedImage() { return _getData(CONST_TREATED_IMAGE); }
+void SoatcarState::setTreatedImage(DataBuf data) { _setData(CONST_TREATED_IMAGE, data); }
 
 

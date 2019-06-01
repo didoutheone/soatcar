@@ -1,8 +1,7 @@
-#ifndef DEF_ORCHESTRATORCONFIG
-#define DEF_ORCHESTRATORCONFIG
+#ifndef DEF_JOYSTICKCONFIG
+#define DEF_JOYSTICKCONFIG
 
 #include <stdbool.h>	// For bool
-#include <vector>		// For vector
 #include <string>		// For string
 
 using namespace std;
@@ -29,6 +28,5 @@ class JoystickConfig
 	private:
 		string configFilePath;
 		void readConfig();
-		vector<string> split(string line);
 };
 #endif

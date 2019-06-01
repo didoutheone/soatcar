@@ -11,23 +11,23 @@ int main(int argc, char *argv[])
         SoatcarState state("/var/tmp/soatcarmmf.tmp");
 
         printf("Set StopFlag to: %d\n", false);
-        state.SetStopFlag(false);
-        bool stopflag = state.GetStopFlag();
+        state.setStopFlag(false);
+        bool stopflag = state.getStopFlag();
         printf("StopFlag is: %d\n", stopflag);
 
         printf("Set StopFlag to: %d\n", true);
-        state.SetStopFlag(true);
-        stopflag = state.GetStopFlag();
+        state.setStopFlag(true);
+        stopflag = state.getStopFlag();
         printf("StopFlag is: %d\n", stopflag);
 
         printf("Set Throttle to: %d\n", 12345);
-        state.SetThrottleOutput(12345);
-        int throttle = state.GetThrottleOutput();
+        state.setThrottleOutput(12345);
+        int throttle = state.getThrottleOutput();
         printf("Throttle is: %d\n", throttle);
 
         printf("Set Image no to: %llu\n", 9223372036854775800);
-        state.SetRawImageNo(9223372036854775800);
-        u64 imageNo = state.GetRawImageNo();
+        state.setRawImageNo(9223372036854775800);
+        u64 imageNo = state.getRawImageNo();
         printf("Image no is: %llu\n", imageNo);
 
         int fd = open("testfile", O_RDONLY);
@@ -51,10 +51,10 @@ int main(int argc, char *argv[])
                 printf("%02x", data.buffer[i]);
         }
         printf("\n");
-        state.SetRawImage(data);
+        state.setRawImage(data);
         free(data.buffer);
 
-        DataBuf imageData = state.GetRawImage();
+        DataBuf imageData = state.getRawImage();
         printf("Image size is: %d\n", imageData.length);
         for(int i = 0; i < 100; i++)
         {

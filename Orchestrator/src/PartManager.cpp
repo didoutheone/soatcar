@@ -17,7 +17,7 @@ PartManager::PartManager(part_config ppart)
 	part = ppart;
 }
 
-int PartManager::Start()
+int PartManager::start()
 {
 	int pid = fork();
 	
@@ -75,7 +75,7 @@ int PartManager::Start()
 	else
 	{
 		// In the parent process with the pid of the children in pid
-		int ret = Utils::WriteFile(part.pidfile, to_string(pid));
+		int ret = Utils::writeFile(part.pidfile, to_string(pid));
 		if(ret != 0)
 		{
 			cerr << "ERROR: Could not write pid file '" << part.pidfile << "' for part '" << part.name << "': part won't be seen as running!" << endl;
@@ -86,10 +86,10 @@ int PartManager::Start()
 	return 0;
 }
 
-bool PartManager::IsAlive()
+bool PartManager::isAlive()
 {
 	// Get pid
-	string strpid = Utils::ReadFileFirstLine(part.pidfile);
+	string strpid = Utils::readFileFirstLine(part.pidfile);
 	if(strpid.length() == 0)
 	{
 		return false;
@@ -106,10 +106,10 @@ bool PartManager::IsAlive()
 	return Utils::exists(ss.str());
 }
 
-bool PartManager::Kill()
+bool PartManager::killPart()
 {
 	// Get pid
-	string strpid = Utils::ReadFileFirstLine(part.pidfile);
+	string strpid = Utils::readFileFirstLine(part.pidfile);
 	
 	if(strpid.length() == 0)
 	{

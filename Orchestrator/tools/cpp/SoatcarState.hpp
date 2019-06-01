@@ -89,187 +89,187 @@ typedef struct DataBuf DataBuf;
 class SoatcarState
 {
 	private:
-	// MMap buffer
-	u8* _mmap;
-	// Retrieve a bool from the state
-	bool _getFlag(int offset);
-	// Set a bool in the state
-	void _setFlag(int offset, bool flag);
-	// Retrieve an int from the state
-	u32 _getInt(int offset);
-	// Set an int in the state
-	void _setInt(int offset, u32 val);
-	// Retrieve a long from the state
-	u64 _getLong(int offset);
-	// Set a long in the state
-	void _setLong(int offset, u64 val);
-	// Retrieve a string from the state
-	char* _getString(int offset);
-	// Set a string in the state
-	void _setString(int offset, char* str);
-	// Retrieve some data from the state
-	DataBuf _getData(int offset);
-	// Set some data in the state
-	void _setData(int offset, DataBuf data);
+		// MMap buffer
+		u8* _mmap;
+		// Retrieve a bool from the state
+		bool _getFlag(int offset);
+		// Set a bool in the state
+		void _setFlag(int offset, bool flag);
+		// Retrieve an int from the state
+		u32 _getInt(int offset);
+		// Set an int in the state
+		void _setInt(int offset, u32 val);
+		// Retrieve a long from the state
+		u64 _getLong(int offset);
+		// Set a long in the state
+		void _setLong(int offset, u64 val);
+		// Retrieve a string from the state
+		char* _getString(int offset);
+		// Set a string in the state
+		void _setString(int offset, char* str);
+		// Retrieve some data from the state
+		DataBuf _getData(int offset);
+		// Set some data in the state
+		void _setData(int offset, DataBuf data);
 
 	public:
-	// ctor: give it the memory map file full path
-	SoatcarState(const char* filename);
-	
-	// Transform source value in source range to destination value in destination range. May be inverted.
-	double Translate(double fromMin, double fromMax, double toMin, double toMax, double value, bool inverted);
-	
-	//
-	// State elements retrieval methods
-	//
-	
-	// Common fields
-	bool GetStopFlag();
-	void SetStopFlag(bool flag);
+		// ctor: give it the memory map file full path
+		SoatcarState(const char* filename);
+		
+		// Transform source value in source range to destination value in destination range. May be inverted.
+		double translate(double fromMin, double fromMax, double toMin, double toMax, double value, bool inverted);
+		
+		//
+		// State elements retrieval methods
+		//
+		
+		// Common fields
+		bool getStopFlag();
+		void setStopFlag(bool flag);
 
-	bool IsSteeringAuto();
-	void SetSteeringAuto(bool flag);
+		bool isSteeringAuto();
+		void setSteeringAuto(bool flag);
 
-	bool IsThrottleAuto();
-	void SetThrottleAuto(bool flag);
+		bool isThrottleAuto();
+		void setThrottleAuto(bool flag);
 
-	u32 GetMaxThrottleLimit();
-	void SetMaxThrottleLimit(u32 value);
+		u32 getMaxThrottleLimit();
+		void setMaxThrottleLimit(u32 value);
 
-	bool IsConstantThrottleActive();
-	void SetConstantThrottleActive(bool flag);
+		bool isConstantThrottleActive();
+		void setConstantThrottleActive(bool flag);
 
-	u32 GetConstantThrottleValue();
-	void SetConstantThrottleValue(u32 value);
+		u32 getConstantThrottleValue();
+		void setConstantThrottleValue(u32 value);
 
-	char* GetHostName();
-	void SetHostName(char* value);
-
-
-	// Joystick fields
-	bool IsJoystickReady();
-	void SetJoystickReady(bool flag);
-
-	u32 GetJoystickLoopRate();
-	void SetJoystickLoopRate(u32 value);
-
-	u32 GetJoystickSteeringValue();
-	void SetJoystickSteeringValue(u32 value);
-
-	u32 GetJoystickThrottleValue();
-	void SetJoystickThrottleValue(u32 value);
+		char* getHostName();
+		void setHostName(char* value);
 
 
-	// PWM part
-	bool IsActuatorReady();
-	void SetActuatorReady(bool flag);
+		// Joystick fields
+		bool isJoystickReady();
+		void setJoystickReady(bool flag);
 
-	u32 GetActuatorLoopRate();
-	void SetActuatorLoopRate(u32 value);
+		u32 getJoystickLoopRate();
+		void setJoystickLoopRate(u32 value);
 
-	u32 GetSteeringOutput();
-	void SetSteeringOutput(u32 value);
+		u32 getJoystickSteeringValue();
+		void setJoystickSteeringValue(u32 value);
 
-	u32 GetThrottleOutput();
-	void SetThrottleOutput(u32 value);
-
-
-	// System sensors
-	bool IsSystemSensorReady();
-	void SetSystemSensorReady(bool flag);
-
-	u32 GetSystemSensorLoopRate();
-	void SetSystemSensorLoopRate(u32 value);
-
-	u32 GetCPUTemp();
-	void SetCPUTemp(u32 value);
-
-	u32 GetCPULoad();
-	void SetCPULoad(u32 value);
-
-	u32 GetMemoryLoad();
-	void SetMemoryLoad(u32 value);
-
-	u32 GetDiskLoad();
-	void SetDiskLoad(u32 value);
-
-	u32 GetLoadAverage();
-	void SetLoadAverage(u32 value);
+		u32 getJoystickThrottleValue();
+		void setJoystickThrottleValue(u32 value);
 
 
-	// Physical sensors
-	bool IsPhysicalSensorReady();
-	void SetPhysicalSensorReady(bool flag);
+		// PWM part
+		bool isActuatorReady();
+		void setActuatorReady(bool flag);
 
-	u32 GetPhysicalSensorLoopRate();
-	void SetPhysicalSensorLoopRate(u32 value);
+		u32 getActuatorLoopRate();
+		void setActuatorLoopRate(u32 value);
 
-	u32 GetUltrasonicDistance();
-	void SetUltrasonicDistance(u32 value);
+		u32 getSteeringOutput();
+		void setSteeringOutput(u32 value);
 
-
-	// Auto pilot
-	bool IsAutoPilotReady();
-	void SetAutoPilotReady(bool flag);
-
-	u32 GetAutoPilotLoopRate();
-	void SetAutoPilotLoopRate(u32 value);
-
-	u32 GetAutoPilotSteeringValue();
-	void SetAutoPilotSteeringValue(u32 value);
-
-	u32 GetAutoPilotThrottleValue();
-	void SetAutoPilotThrottleValue(u32 value);
-	
-	
-	// Camera
-	bool IsCameraReady();
-	void SetCameraReady(bool flag);
-
-	u32 GetCameraLoopRate();
-	void SetCameraLoopRate(u32 value);
-
-	bool IsRecording();
-	void SetRecording(bool flag);
-
-	char* GetRecordingPrefix();
-	void SetRecordingPrefix(char* value);
-
-	char* GetRecordingFolder();
-	void SetRecordingFolder(char* value);
-
-	u32 GetRecordingImageIndex();
-	void SetRecordingImageIndex(u32 value);
+		u32 getThrottleOutput();
+		void setThrottleOutput(u32 value);
 
 
-	// Remote monitoring web server
-	bool IsRemoteMonitoringReady();
-	void SetRemoteMonitoringReady(bool flag);
+		// System sensors
+		bool isSystemSensorReady();
+		void setSystemSensorReady(bool flag);
 
-	u32 GetRemoteMonitoringLoopRate();
-	void SetRemoteMonitoringLoopRate(u32 value);
+		u32 getSystemSensorLoopRate();
+		void setSystemSensorLoopRate(u32 value);
 
-	
-	// LED Management
-	bool IsLedManagementReady();
-	void SetLedManagementReady(bool flag);
+		u32 getCPUTemp();
+		void setCPUTemp(u32 value);
 
-	u32 GetLedManagementLoopRate();
-	void SetLedManagementLoopRate(u32 value);
+		u32 getCPULoad();
+		void setCPULoad(u32 value);
+
+		u32 getMemoryLoad();
+		void setMemoryLoad(u32 value);
+
+		u32 getDiskLoad();
+		void setDiskLoad(u32 value);
+
+		u32 getLoadAverage();
+		void setLoadAverage(u32 value);
 
 
-	// Images
-	u64 GetRawImageNo();
-	void SetRawImageNo(u64 imageNo);
+		// Physical sensors
+		bool isPhysicalSensorReady();
+		void setPhysicalSensorReady(bool flag);
 
-	DataBuf GetRawImage();
-	void SetRawImage(DataBuf data);
+		u32 getPhysicalSensorLoopRate();
+		void setPhysicalSensorLoopRate(u32 value);
 
-	u64 GetTreatedImageNo();
-	void SetTreatedImageNo(u64 imageNo);
+		u32 getUltrasonicDistance();
+		void setUltrasonicDistance(u32 value);
 
-	DataBuf GetTreatedImage();
-	void SetTreatedImage(DataBuf data);
+
+		// Auto pilot
+		bool isAutoPilotReady();
+		void setAutoPilotReady(bool flag);
+
+		u32 getAutoPilotLoopRate();
+		void setAutoPilotLoopRate(u32 value);
+
+		u32 getAutoPilotSteeringValue();
+		void setAutoPilotSteeringValue(u32 value);
+
+		u32 getAutoPilotThrottleValue();
+		void setAutoPilotThrottleValue(u32 value);
+		
+		
+		// Camera
+		bool isCameraReady();
+		void setCameraReady(bool flag);
+
+		u32 getCameraLoopRate();
+		void setCameraLoopRate(u32 value);
+
+		bool isRecording();
+		void setRecording(bool flag);
+
+		char* getRecordingPrefix();
+		void setRecordingPrefix(char* value);
+
+		char* getRecordingFolder();
+		void setRecordingFolder(char* value);
+
+		u32 getRecordingImageIndex();
+		void setRecordingImageIndex(u32 value);
+
+
+		// Remote monitoring web server
+		bool isRemoteMonitoringReady();
+		void setRemoteMonitoringReady(bool flag);
+
+		u32 getRemoteMonitoringLoopRate();
+		void setRemoteMonitoringLoopRate(u32 value);
+
+		
+		// LED Management
+		bool isLedManagementReady();
+		void setLedManagementReady(bool flag);
+
+		u32 getLedManagementLoopRate();
+		void setLedManagementLoopRate(u32 value);
+
+
+		// Images
+		u64 getRawImageNo();
+		void setRawImageNo(u64 imageNo);
+
+		DataBuf getRawImage();
+		void setRawImage(DataBuf data);
+
+		u64 getTreatedImageNo();
+		void setTreatedImageNo(u64 imageNo);
+
+		DataBuf getTreatedImage();
+		void setTreatedImage(DataBuf data);
 
 };
 #endif

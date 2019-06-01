@@ -1,4 +1,4 @@
-TOOLSDIR= ../tools
+TOOLSDIR= ../tools/cpp
 CFLAGS  = -Wall -g -O2 -I../tools/cpp
 LDFLAGS = -lstdc++
 

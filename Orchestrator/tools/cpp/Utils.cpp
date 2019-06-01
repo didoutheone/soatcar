@@ -3,6 +3,7 @@
 #include <string>		// for string
 #include <algorithm>	// for find_if, transform
 #include <sys/stat.h>	// for stat
+#include <vector>		// For vector
 #include "Utils.hpp"
 
 using namespace std;
@@ -20,7 +21,7 @@ string Utils::toLower(string s)
 	return res;
 }
 
-int Utils::WriteFile(string filename, string text)
+int Utils::writeFile(string filename, string text)
 {
 	ofstream thefile(filename);
 	if (thefile.is_open())
@@ -36,7 +37,7 @@ int Utils::WriteFile(string filename, string text)
 	}
 }
 
-string Utils::ReadFileFirstLine(string filename)
+string Utils::readFileFirstLine(string filename)
 {
 	if(!exists(filename)) return "";
 	
@@ -55,7 +56,7 @@ string Utils::ReadFileFirstLine(string filename)
 	}
 }
 
-int Utils::ExecuteShellCommand(string cmd)
+int Utils::executeShellCommand(string cmd)
 {
 	return system(cmd.c_str());
 }
@@ -64,4 +65,16 @@ bool Utils::exists(string filename)
 {
 	struct stat buffer;
 	return (stat(filename.c_str(), &buffer) == 0);
+}
+
+vector<string> Utils::split(string line)
+{
+	vector<string> result(2);
+	string header = line.substr(0, line.find_first_of("="));
+	string value = line.substr(line.find_first_of("=")+1);
+	
+	result[0] = header;
+	result[1] = value;
+	
+	return result;
 }

@@ -30,7 +30,7 @@ class JoystickPart
 {
 	public:
 		JoystickPart();
-		void Run();
+		void run();
 		
 	private:
 		SoatcarState state{"/var/tmp/soatcarmmf.tmp"};
@@ -38,9 +38,9 @@ class JoystickPart
 		unsigned long long nbInput;
 		joyInfos_t* infos;
 		
-		joyInfos_t* OpenJoystickDevice(uint8_t joyNo);
-		js_event_t PollJoystick(joyInfos_t *joy);
-		void CloseJoystickDevice(joyInfos_t *joy);
+		joyInfos_t* openJoystickDevice(uint8_t joyNo);
+		js_event_t pollJoystick(joyInfos_t *joy);
+		void closeJoystickDevice(joyInfos_t *joy);
 };
 
 #endif

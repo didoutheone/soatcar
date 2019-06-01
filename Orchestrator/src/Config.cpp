@@ -1,6 +1,7 @@
 #include <fstream>		// for infile
 #include <iostream>		// for cout and cerr
 #include <regex>		// for regex_replace
+#include <vector>		// For vector
 #include "Config.hpp"
 #include "Utils.hpp"
 
@@ -89,7 +90,8 @@ void OrchestratorConfig::readConfig()
 		}
 		
 		// Split on equal (=) sign and get header and value
-		vector<string> tokens = split(line);
+		vector<string> tokens = Utils::split(line);
+		tokens[1] = regex_replace(tokens[1], regex("\\[Root]"), RootDirectory);
 		
 		// Main section
 		if(section == MAIN_SECTION)
@@ -149,19 +151,6 @@ bool OrchestratorConfig::isAuto(string token, string line)
 		cerr << "**** ERROR: boolean config (" << token << ") should be auto or manual!" << endl << "Line is: " << line << endl;
 		exit(-30);
 	}
-}
-
-vector<string> OrchestratorConfig::split(string line)
-{
-	vector<string> result(2);
-	string header = line.substr(0, line.find_first_of("="));
-	string value = line.substr(line.find_first_of("=")+1);
-	string resValue = regex_replace(value, regex("\\[Root]"), RootDirectory);
-	
-	result[0] = header;
-	result[1] = resValue;
-	
-	return result;
 }
 
 void OrchestratorConfig::fillMain(vector<string> tokens, string line)

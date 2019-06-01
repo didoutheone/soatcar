@@ -61,7 +61,7 @@ void JoystickConfig::readConfig()
 		line.erase(remove(line.begin(), line.end(), '\r'), line.end());
 		
 		// Split on equal (=) sign and get header and value
-		vector<string> tokens = split(line);
+		vector<string> tokens = Utils::split(line);
 		
 		if(Utils::toLower(tokens[0]) == "joystickdeviceno")
 		{
@@ -131,19 +131,5 @@ void JoystickConfig::readConfig()
 			exit(-8);
 		}
 	}
-}
-
-
-
-vector<string> JoystickConfig::split(string line)
-{
-	vector<string> result(2);
-	string header = line.substr(0, line.find_first_of("="));
-	string value = line.substr(line.find_first_of("=")+1);
-	
-	result[0] = header;
-	result[1] = value;
-	
-	return result;
 }
 

@@ -68,7 +68,6 @@ class OrchestratorConfig
 		int treatSectionLine(string line);
 		string getSectionName(string line);
 		bool isAuto(string token, string line);
-		vector<string> split(string line);
 		void fillMain(vector<string> tokens, string line);
 		void fillSetup(vector<string> tokens, string line);
 		void fillTearDown(vector<string> tokens, string line);

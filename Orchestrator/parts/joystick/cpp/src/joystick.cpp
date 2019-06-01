@@ -11,17 +11,29 @@
 
 using namespace std;
 
-int main(int argc, char** argv)
+JoystickPart::JoystickPart()
 {
-	JoystickPart j;
-	j.Run();
+	nbInput = 0;
+	
+	cout << "Initializing Joystick..." << endl;
+
+	infos = openJoystickDevice(config.DeviceNo);
+	if(infos == NULL)
+	{
+		cerr << "Error while initializing Joystick " << config.DeviceNo << endl;
+		exit(-1);
+	}
+	
+    cout << "Joystick initialized successfully" << endl;
+	
+	state.setJoystickReady(true);
 }
 
-void JoystickPart::Run()
+void JoystickPart::run()
 {
-	while(!state.GetStopFlag())
+	while(!state.getStopFlag())
 	{
-		js_event_t event = PollJoystick(infos);
+		js_event_t event = pollJoystick(infos);
 		
 		if(event.type != 0x0 && event.type != 0x40)
 		{
@@ -34,7 +46,7 @@ void JoystickPart::Run()
                 if (event.number == config.Button1)
                 {
                     // Button1 is the cross: Stop
-					state.SetStopFlag(true);
+					state.setStopFlag(true);
 					cout << "Button1 pressed: STOP!" << endl;
                 }
                 else
@@ -48,22 +60,22 @@ void JoystickPart::Run()
 				cout << "Time " << event.time << ": axis number " << event.number << " was pushed to " << event.value << endl;
 				if (event.number == config.AxisDirection)
                 {
-					int finalValue = state.Translate(MIN_JOYSTICK_INPUT_VALUE, MAX_JOYSTICK_INPUT_VALUE, MIN_STATE_FIELDS_VALUE, MAX_STATE_FIELDS_VALUE, event.value, config.AxisDirectionInverted);
+					int finalValue = state.translate(MIN_JOYSTICK_INPUT_VALUE, MAX_JOYSTICK_INPUT_VALUE, MIN_STATE_FIELDS_VALUE, MAX_STATE_FIELDS_VALUE, event.value, config.AxisDirectionInverted);
 					// Always respect min and max
 					if(finalValue < MIN_STATE_FIELDS_VALUE) finalValue = MIN_STATE_FIELDS_VALUE;
 					if(finalValue > MAX_STATE_FIELDS_VALUE) finalValue = MAX_STATE_FIELDS_VALUE;
-					state.SetJoystickSteeringValue(finalValue);
+					state.setJoystickSteeringValue(finalValue);
 					cout << "Direction was set in State to " << finalValue << endl;
                 }
                 else if (event.number == config.AxisSpeed)
                 {
-					int finalValue = state.Translate(MIN_JOYSTICK_INPUT_VALUE, MAX_JOYSTICK_INPUT_VALUE, MIN_STATE_FIELDS_VALUE, MAX_STATE_FIELDS_VALUE, event.value, config.AxisSpeedInverted);
+					int finalValue = state.translate(MIN_JOYSTICK_INPUT_VALUE, MAX_JOYSTICK_INPUT_VALUE, MIN_STATE_FIELDS_VALUE, MAX_STATE_FIELDS_VALUE, event.value, config.AxisSpeedInverted);
 					// Always respect min and max
 					if(finalValue < MIN_STATE_FIELDS_VALUE) finalValue = MIN_STATE_FIELDS_VALUE;
 					if(finalValue > MAX_STATE_FIELDS_VALUE) finalValue = MAX_STATE_FIELDS_VALUE;
 					// Also respect max speed value
-					if((unsigned int)finalValue > state.GetMaxThrottleLimit()) finalValue = state.GetMaxThrottleLimit();
-					state.SetJoystickThrottleValue(finalValue);
+					if((unsigned int)finalValue > state.getMaxThrottleLimit()) finalValue = state.getMaxThrottleLimit();
+					state.setJoystickThrottleValue(finalValue);
 					cout << "Throttle was set in State to " << finalValue << endl;
                 }
 			}
@@ -72,26 +84,11 @@ void JoystickPart::Run()
 		this_thread::sleep_for(chrono::milliseconds(5));
 	}
 	
-	CloseJoystickDevice(infos);
+	closeJoystickDevice(infos);
+	state.setJoystickReady(false);
 }
 
-JoystickPart::JoystickPart()
-{
-	nbInput = 0;
-	
-	cout << "Initializing Joystick..." << endl;
-
-	infos = OpenJoystickDevice(config.DeviceNo);
-	if(infos == NULL)
-	{
-		cerr << "Error while initializing Joystick " << config.DeviceNo << endl;
-		exit(-1);
-	}
-	
-    cout << "Joystick initialized successfully" << endl;
-}
-
-joyInfos_t* JoystickPart::OpenJoystickDevice(uint8_t joyNo)
+joyInfos_t* JoystickPart::openJoystickDevice(uint8_t joyNo)
 {
 	int joy_fd, num_of_axis=0, num_of_buttons=0;
 	char name_of_joystick[80];
@@ -121,7 +118,7 @@ joyInfos_t* JoystickPart::OpenJoystickDevice(uint8_t joyNo)
 	return joy;
 }
 
-js_event_t JoystickPart::PollJoystick(joyInfos_t *joy)
+js_event_t JoystickPart::pollJoystick(joyInfos_t *joy)
 {
 	js_event_t js;
 	int nbRead = read(joy->fd, &js, sizeof(js));
@@ -143,7 +140,7 @@ js_event_t JoystickPart::PollJoystick(joyInfos_t *joy)
 	return js;
 }
 
-void JoystickPart::CloseJoystickDevice(joyInfos_t *joy)
+void JoystickPart::closeJoystickDevice(joyInfos_t *joy)
 {
 	close(joy->fd);
 }
