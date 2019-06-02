@@ -4,17 +4,15 @@ LDFLAGS  = -lstdc++
 
 SRC_C    = main.cpp config.cpp joystick.cpp $(TOOLSDIR)/Utils.cpp $(TOOLSDIR)/SoatcarState.cpp
 
-LIBS     =
-
 TARGET   = joystick
 
 $(TARGET):
-		$(CC) $(LIBS) $(LDFLAGS) $(SRC_C) $(CFLAGS) -o $(TARGET)
+		$(CC) $(LDFLAGS) $(SRC_C) $(CFLAGS) -o $(TARGET)
 
 all:	$(TARGET)
 
 clean:
-		rm -f $(OBJS) $(TARGET) ../$(TARGET)
+		rm -f $(TARGET) ../$(TARGET)
 
 install:
 		cp $(TARGET) ..

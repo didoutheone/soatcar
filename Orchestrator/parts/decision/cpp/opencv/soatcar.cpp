@@ -7,6 +7,29 @@
 #include <chrono>
 #include "SoatcarState.hpp"
 
+/*
+byte * matToBytes(Mat image)
+{
+   int size = image.total() * image.elemSize();
+   byte * bytes = new byte[size];  // you will have to delete[] that later
+   std::memcpy(bytes,image.data,size * sizeof(byte));
+}
+
+Mat bytesToMat(byte * bytes, int width, int height)
+{
+    Mat image = Mat(height,width,CV_8UC3,bytes).clone(); // make a copy
+    return image;
+}
+
+Mat DataBufToMat(DataBuf imageData)
+{
+	// Create a Size(1, nSize) Mat object of 8-bit, single-byte elements
+    Mat rawData(1, imageData.length, CV_8UC1, (void*)imageData.buffer);
+    Mat image  =  imdecode(rawData, IMREAD_COLOR);
+	return image;
+}
+*/
+
 using namespace cv;
 using namespace std;
 

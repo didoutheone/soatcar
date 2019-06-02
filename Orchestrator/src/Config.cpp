@@ -173,11 +173,11 @@ void OrchestratorConfig::fillMain(vector<string> tokens, string line)
 		}
 		MaxThrottleLimit = stoi(tokens[1]);
 	}
-	else if(Utils::toLower(tokens[0]) == "ConstantThrottleActive")
+	else if(Utils::toLower(tokens[0]) == "constantthrottleactive")
 	{
 		ConstantThrottleActive = (Utils::toLower(tokens[1]) == "true");
 	}
-	else if(Utils::toLower(tokens[0]) == "ConstantThrottleValue")
+	else if(Utils::toLower(tokens[0]) == "constantthrottlevalue")
 	{
 		if(!Utils::isNumeric(tokens[1]))
 		{

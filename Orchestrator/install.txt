@@ -1,2 +1,93 @@
-Avant de commecner à tester, ne pas oublier de créer le fichier MMF :
-dd if=/dev/zero of=/var/tmp/soatcarmmf.tmp bs=1024 count=3072
+============================================
+================= PRE-REQUIS ===============
+============================================
+
+--------- OPENCV -----------
+OpenCV install from sources
+https://docs.opencv.org/3.4/d7/d9f/tutorial_linux_install.html
+
+# Installs apt :
+apt-get install cmake
+
+# Récupérer openCV
+wget https://github.com/opencv/opencv/archive/4.0.1.zip
+unzip 4.0.1.zip
+
+# Préparation du build
+cd opencv-4.0.1
+mkdir build
+cd build
+
+# Configuration : cmake [optional parameters] <path to the OpenCV source directory>
+cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_EXAMPLES=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF -D INSTALL_PYTHON_EXAMPLES=OFF -D BUILD_opencv_apps=OFF ..
+
+# augmenter la taille du swap
+# Dans /etc/dphys-swapfile mettre 2048 et relancer /etc/init.d/dphys-swapfile
+
+# Build sur N threads
+make -j4
+
+# remettre la taille du swap à 100
+# Dans /etc/dphys-swapfile mettre 100 et relancer /etc/init.d/dphys-swapfile
+
+# Enfin make install
+sudo make install
+
+
+
+--------- RASPICAM -----------
+cf https://github.com/cedricve/raspicam
+
+# Git :
+git clone https://github.com/cedricve/raspicam raspicam
+
+# build
+cd raspicam
+mkdir build
+cd build
+cmake ..
+make
+
+# install
+sudo make install
+sudo ldconfig
+
+
+
+--------- MMAP-IO pour JS -----------
+Necessite npm, node-gyp et yarn
+
+# Git
+git clone https://github.com/ozra/mmap-io.git mmap-io
+
+# build
+npm i
+
+# Récupération des seuls fichiers intéressants
+mkdir mmap-io
+cd mmap-io
+mkdir build
+cp ../build//es-release/mmap-io.js .
+cp ../build/Release/mmap-io.node build/
+
+# Modification du fichier js
+Modifer mmap-io.js
+Remplacer la ligne :
+const mmap_lib_raw_ = require("../../build/Release/mmap-io");
+Par :
+const mmap_lib_raw_ = require("./build/mmap-io");
+
+Le répertoire mmap-io est le répertoire intéressant, utilisable par SoatcarState.js en faisant un var mmap = require('./mmap-io/mmap-io');
+
+
+
+============================================
+================= PARTS ====================
+============================================
+Chacune des parts à un Makefile à jouer
+
+# build
+make
+# install
+make install
+

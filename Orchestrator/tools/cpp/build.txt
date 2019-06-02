@@ -1,5 +1,5 @@
 # pour builder :
-gcc test.cpp SoatcarState.cpp -o test
+g++ test.cpp SoatcarState.cpp Utils.cpp -o test
 
 # pour lancer :
 ./test
