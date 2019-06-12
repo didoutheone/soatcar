@@ -55,7 +55,12 @@ sudo ldconfig
 
 
 --------- MMAP-IO pour JS -----------
-Necessite npm, node-gyp et yarn
+Necessite npm, node-gyp et yarn :
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt-get update
+sudo apt-get install yarn
+
 
 # Git
 git clone https://github.com/ozra/mmap-io.git mmap-io
@@ -67,7 +72,7 @@ npm i
 mkdir mmap-io
 cd mmap-io
 mkdir build
-cp ../build//es-release/mmap-io.js .
+cp ../build/es-release/mmap-io.js .
 cp ../build/Release/mmap-io.node build/
 
 # Modification du fichier js
