@@ -20,6 +20,8 @@ OrchestratorConfig::OrchestratorConfig(string filename)
 	}
 	
 	readConfig();
+	
+	cout << toString();
 }
 
 string OrchestratorConfig::toString()
