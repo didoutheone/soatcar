@@ -53,7 +53,7 @@ var server = http.createServer(function(req, res) {
 });
 
 // Chargement de socket.io
-var io = require('socket.io').listen(server);
+var io = require('socket.io')(server);
 
 // Quand un client se connecte, on le note dans la console
 io.sockets.on('connection', function (socket) {
