@@ -1,5 +1,5 @@
-# SoatCar Commun
-Des outils pour nos projets  
+# Orchestrator
+Les parts gérant chacun un élement (joystick, vitesse, caméra, direction, decision...)  et leur orchestrateur.  
 
 # Salient Visualisation
 Nécessite d'installer Keras
